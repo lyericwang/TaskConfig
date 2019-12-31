@@ -217,9 +217,9 @@ js文件一打开最前面就是这个配置
 
 ```javascript
 let config = {
-    darksky_api: ``, //从https://darksky.net/dev/ 上申请key填入即可
-    aqicn_api: ``, //从http://aqicn.org/data-platform/token/#/ 上申请key填入即可
-    lat_lon: "", //请填写经纬度,直接从谷歌地图中获取即可
+    darksky_api: `填这里不要填错了`, //从https://darksky.net/dev/ 上申请key填入即可
+    aqicn_api: `填这里不要填错了`, //从http://aqicn.org/data-platform/token/#/ 上申请key填入即可
+    lat_lon: "填这里", //请填写经纬度,直接从谷歌地图中获取即可，用英文逗号(,)隔开经纬度，记住经纬度中间不要有空格。例如"31.3116247,120.5944135"
     lang: 'zh', //语言,请不要修改
     uv: true, //紫外线显示,false则不显示
     apparent: true, //体感温度显示,false则不显示
