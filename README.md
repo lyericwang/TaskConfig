@@ -9,59 +9,11 @@
 
 ## 签到
 
-### 网易云音乐
-
-[此脚本来源于]: https://github.com/sazs34/TaskConfig	"wechatu"
-
-![image-20191231110606761](assets/image-20191231110606761.png)
-
-#### 获取Cookie
-
-```quanx_config
-[rewrite_local]
-# 此处用于网易云音乐cookie获取，当失效时需浏览器访问并登录:https://music.163.com/m/login 获取cookie
-^https?:\/\/music\.163\.com url script-response-body cookie/cookie_netease_music.js
-
-[mitm]
-hostname = music.163.com
-```
-
-#### Task
-
-```quanx_config
-[task_local]
-# 表示每天07:33分执行一次
-33 7 * * * task/sign_netease_music.js
-```
-
-### 爱奇艺会员
-
-[此脚本来源于]: https://github.com/NobyDa/Script	"NobyDa"
-
-![image-20191231111239380](assets/image-20191231111239380.png)
-
-#### 获取Cookie
-
-```quanx_config
-[rewrite_local]
-# 此处用于爱奇艺cookie获取，加mitm后打开APP，点击“我的”即可
-https:\/\/passport\.iqiyi\.com\/apis\/user\/info\.action.*authcookie url script-response-body js/cookie/cookie_iqiyi.js
-
-[mitm]
-hostname = passport.iqiyi.com
-```
-
-#### Task
-
-```quanx_config
-[task_local]
-# 表示每天07:34分执行一次
-34 7 * * * js/task/sign_iqiyi_bonus.js
-```
-
 ### 百度贴吧
 
-[此脚本来源于]: https://github.com/sazs34/TaskConfig	"wechatu"
+> 此功能来源于此git
+> 
+> 如有引用或基于此版本的修改请注明即可
 
 ![image-20191231112457531](assets/image-20191231112457531.png)
 
@@ -122,9 +74,71 @@ var singleNotifyCount = 20; //想签到几个汇总到一个通知里,这里就�
 
 这个需要您手动前去验证或者退出登录重新获取新的cookie试试
 
+### 网易云音乐
+
+> 此代码源于https://github.com/chavyleung/scripts
+>
+> 并进行提示和内部逻辑的优化
+>
+> 感谢[@chavyleung](https://github.com/chavyleung)
+
+![image-20191231110606761](assets/image-20191231110606761.png)
+
+#### 获取Cookie
+
+```quanx_config
+[rewrite_local]
+# 此处用于网易云音乐cookie获取，当失效时需浏览器访问并登录:https://music.163.com/m/login 获取cookie
+^https?:\/\/music\.163\.com url script-response-body cookie/cookie_netease_music.js
+
+[mitm]
+hostname = music.163.com
+```
+
+#### Task
+
+```quanx_config
+[task_local]
+# 表示每天07:33分执行一次
+33 7 * * * task/sign_netease_music.js
+```
+
+### 爱奇艺会员
+
+> 此代码源于 https://github.com/NobyDa/Script
+>
+> 仅拷贝过来
+>
+> 感谢[@NobyDa](https://github.com/NobyDa)
+
+![image-20191231111239380](assets/image-20191231111239380.png)
+
+#### 获取Cookie
+
+```quanx_config
+[rewrite_local]
+# 此处用于爱奇艺cookie获取，加mitm后打开APP，点击“我的”即可
+https:\/\/passport\.iqiyi\.com\/apis\/user\/info\.action.*authcookie url script-response-body js/cookie/cookie_iqiyi.js
+
+[mitm]
+hostname = passport.iqiyi.com
+```
+
+#### Task
+
+```quanx_config
+[task_local]
+# 表示每天07:34分执行一次
+34 7 * * * js/task/sign_iqiyi_bonus.js
+```
+
 ### 京东
 
-[此脚本来源于]: https://github.com/NobyDa/Script	"NobyDa"
+> 此代码源于 https://github.com/NobyDa/Script
+>
+> 仅拷贝过来
+>
+> 感谢[@NobyDa](https://github.com/NobyDa)
 
 ![image-20191231113149665](assets/image-20191231113149665.png)
 
@@ -149,7 +163,11 @@ hostname = api.m.jd.com
 
 ### V2EX
 
-[此脚本来源于]: https://github.com/chavyleung/scripts	"chavyleung"
+> 此代码源于https://github.com/chavyleung/scripts
+>
+> 并对cookie的获取进行优化,使得cookie可以得到及时的更新
+>
+> 感谢[@chavyleung](https://github.com/chavyleung)
 
 ![image-20191231143831929](assets/image-20191231143831929.png)
 
@@ -175,6 +193,10 @@ hostname = *.v2ex.com
 ## 功能
 
 ### 天气
+
+> 此功能来源于此git
+>
+> 如有引用或基于此版本的修改请注明即可
 
 ![image-20191231172439832](assets/image-20191231172439832.png)
 
