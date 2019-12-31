@@ -176,7 +176,7 @@ hostname = *.v2ex.com
 
 ### 天气
 
-![image-20191231114044232](assets/image-20191231114044232.png)
+![image-20191231163838105](assets/image-20191231163838105.png)
 
 #### API KEY申请
 
