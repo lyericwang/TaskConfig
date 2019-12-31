@@ -3,9 +3,9 @@
 https://github.com/sazs34/TaskConfig#%E5%A4%A9%E6%B0%94
  */
 let config = {
-    darksky_api: ``, //从https://darksky.net/dev/ 上申请key填入即可
-    aqicn_api: ``, //从http://aqicn.org/data-platform/token/#/ 上申请key填入即可
-    lat_lon: "", //请填写经纬度,直接从谷歌地图中获取即可
+    darksky_api: `填这里`, //从https://darksky.net/dev/ 上申请key填入即可
+    aqicn_api: `填这里`, //从http://aqicn.org/data-platform/token/#/ 上申请key填入即可
+    lat_lon: "填这里", //请填写经纬度,直接从谷歌地图中获取即可
     lang: 'zh', //语言,请不要修改
     uv: true, //紫外线显示,false则不显示
     apparent: true, //体感温度显示,false则不显示
@@ -22,7 +22,10 @@ function weather() {
 
     $task.fetch(wurl).then(response => {
         let obj = JSON.parse(response.body);
-        // console.log("天气数据获取-1", obj);
+        // console.log(`天气数据获取-1-${JSON.stringify(obj)}`);
+        if (obj.error){
+            $notify("DarkApi","出错啦",obj.error);
+        }
         let icon_text = obj.hourly.icon;
         let icon = "❓"
         if (icon_text == "clear-day") icon = "☀️晴";
@@ -72,6 +75,9 @@ function aqi(weatherInfo) {
     }
     $task.fetch(aqi).then(response => {
         var obj1 = JSON.parse(response.body);
+        if (obj1.status=='error'){
+            $notify("Aqicn","出错啦",obj1.data);
+        }
         // console.log(`天气数据获取-3-${JSON.stringify(obj1)}`);
         var aqi = obj1.data.aqi;
         var loc = obj1.data.city.name;
