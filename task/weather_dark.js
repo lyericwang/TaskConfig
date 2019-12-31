@@ -23,8 +23,8 @@ function weather() {
     $task.fetch(wurl).then(response => {
         let obj = JSON.parse(response.body);
         // console.log(`天气数据获取-1-${JSON.stringify(obj)}`);
-        if (obj.error){
-            $notify("DarkApi","出错啦",obj.error);
+        if (obj.error) {
+            $notify("DarkApi", "出错啦", obj.error);
         }
         let icon_text = obj.hourly.icon;
         let icon = "❓"
@@ -75,20 +75,24 @@ function aqi(weatherInfo) {
     }
     $task.fetch(aqi).then(response => {
         var obj1 = JSON.parse(response.body);
-        if (obj1.status=='error'){
-            $notify("Aqicn","出错啦",obj1.data);
+        if (obj1.status == 'error') {
+            $notify("Aqicn", "出错啦", obj1.data);
         }
         // console.log(`天气数据获取-3-${JSON.stringify(obj1)}`);
         var aqi = obj1.data.aqi;
         var loc = obj1.data.city.name;
         try {
-            var temp = loc.splic(",");
-            if (temp.length>=2){
-                temp = temp [1].split("(");
-                if (temp.length >= 2){
-                    loc = temp[1].replace(")","") +" ";
-                }else {
-                    loc = temp [0];
+            console.log(loc);
+            var locArr = loc.split(",");
+            if (locArr.length >= 2) {
+                console.log(locArr[1]);
+                var placeArr = locArr[1].split("(");
+                if (placeArr.length >= 2) {
+                    console.log(locArr[1]);
+                    loc = placeArr[1].replace(")", "") + " ";
+                } else {
+                    console.log(locArr[0]);
+                    loc = placeArr[0];
                 }
             }
         } catch (e) {
@@ -97,7 +101,7 @@ function aqi(weatherInfo) {
         }
         var aqiInfo = getAqiInfo(aqi);
         var weather = `${icon} ${Math.round(daily_mintemp)} ~ ${Math.round(daily_maxtemp)}℃  ☔️下雨概率 ${(Number(daily_prec_chance) * 100).toFixed(1)}%`;
-let detail = `😷空气质量 ${aqi}(${aqiInfo.aqiDesc}) 💨风速${daily_windspeed}km/h`;
+        let detail = `😷空气质量 ${aqi}(${aqiInfo.aqiDesc}) 💨风速${daily_windspeed}km/h`;
         if (config.uv) {
             detail += `
 🌚紫外线指数${daily_uvIndex}(${getUVDesc(daily_uvIndex)})`;
