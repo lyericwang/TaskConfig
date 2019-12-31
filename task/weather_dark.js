@@ -1,3 +1,6 @@
+/*
+如果您想追踪更新内容,可以访问https://github.com/sazs34/TaskConfig
+*/
 //dark sky api: https://darksky.net/dev
 var api = "";//此处填写dark sky申请到的key
 
