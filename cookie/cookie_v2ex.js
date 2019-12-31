@@ -1,5 +1,3 @@
-const cookieName = 'V2EX';
-
 let cookieName = `CookieV2ex`;
 let headerCookie = $request.headers["Cookie"];
 let historyCookie = $prefs.valueForKey(cookieName);
