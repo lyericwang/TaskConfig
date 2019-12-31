@@ -74,6 +74,13 @@ function aqi(weatherInfo) {
         var obj1 = JSON.parse(response.body);
         // console.log(`天气数据获取-3-${JSON.stringify(obj1)}`);
         var aqi = obj1.data.aqi;
+        var loc = obj1.data.city.name;
+        try {
+            loc = loc.split(",")[1].split("(")[0];
+        } catch (e) {
+            loc = '';
+            console.log(`获取城市名称失败-${JSON.stringify(e)}`);
+        }
         var aqiInfo = getAqiInfo(aqi);
         var weather = `${icon} ${Math.round(daily_mintemp)} ~ ${Math.round(daily_maxtemp)}℃  ☔️下雨概率 ${(Number(daily_prec_chance) * 100).toFixed(1)}%`;
 let detail = `😷空气质量 ${aqi}(${aqiInfo.aqiDesc}) 💨风速${daily_windspeed}km/h`;
@@ -89,7 +96,7 @@ let detail = `😷空气质量 ${aqi}(${aqiInfo.aqiDesc}) 💨风速${daily_wind
             detail += `
 ${aqiInfo.aqiWarning?"Tips:":""}${aqiInfo.aqiWarning}`;
         }
-        $notify(hour_summary, weather, detail);
+        $notify(`${loc}${hour_summary}`, weather, detail);
     }, reason => {
         $notify("Aqicn.org", '信息获取失败', reason.error);
     });
