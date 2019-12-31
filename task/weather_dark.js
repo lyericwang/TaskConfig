@@ -82,7 +82,15 @@ function aqi(weatherInfo) {
         var aqi = obj1.data.aqi;
         var loc = obj1.data.city.name;
         try {
-            loc = loc.split(",")[1].split("(")[0];
+            var temp = loc.splic(",");
+            if (temp.length>=2){
+                temp = temp [1].split("(");
+                if (temp.length >= 2){
+                    loc = temp[1].replace(")","") +" ";
+                }else {
+                    loc = temp [0];
+                }
+            }
         } catch (e) {
             loc = '';
             console.log(`获取城市名称失败-${JSON.stringify(e)}`);
