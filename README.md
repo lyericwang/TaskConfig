@@ -147,6 +147,31 @@ hostname = api.m.jd.com
 31 7 * * * task/sign_jd_bonus.js
 ```
 
+### V2EX
+
+[此脚本来源于]: https://github.com/chavyleung/scripts	"chavyleung"
+
+
+
+#### 获取Cookie
+
+```quanx_config
+[rewrite_local]
+# 此处用于V2EX cookie获取，浏览器打开https://www.v2ex.com/mission/daily 后提示成功即可
+^https:\/\/www\.v2ex\.com\/mission\/daily url script-response-body cookie/cookie_v2ex.js
+
+[mitm]
+hostname = *.v2ex.com
+```
+
+#### Task
+
+```quanx_config
+[task_local]
+# 表示每天07:31分执行一次
+31 7 * * * task/sign_v2ex.js
+```
+
 ## 功能
 
 ### 天气

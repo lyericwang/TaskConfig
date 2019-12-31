@@ -1,5 +1,5 @@
 const cookieName = 'V2EX'
-const cookieKey = 'chavy_cookie_v2ex'
+const cookieKey = 'CookieV2ex'
 const cookieVal = $prefs.valueForKey(cookieKey)
 
 function sign() {
