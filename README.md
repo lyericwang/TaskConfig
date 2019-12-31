@@ -176,7 +176,7 @@ hostname = *.v2ex.com
 
 ### 天气
 
-![image-20191231163838105](assets/image-20191231163838105.png)
+![image-20191231172439832](assets/image-20191231172439832.png)
 
 #### API KEY申请
 
@@ -187,16 +187,22 @@ hostname = *.v2ex.com
 
 #### 配置项
 
-js文件中对应的三个位置需要填写
+js文件一打开最前面就是这个配置
+
+申请一下两个api的key,再用谷歌地图获取一下你想获取位置的经纬度填入即可
+
+最后三个选项用于精简显示数据,默认都是显示的
 
 ```javascript
-//dark sky api: https://darksky.net/dev
-var api = "";//此处填写dark sky申请到的key
-
-//aqi api: http://aqicn.org/data-platform/token/#/
-var api_aqi = ""//此处填写aqi申请到的key
-
-var lat_lon = ""//此处填写经纬度,可以直接从google地图上获取,填写即可
+let config = {
+    darksky_api: ``, //从https://darksky.net/dev/ 上申请key填入即可
+    aqicn_api: ``, //从http://aqicn.org/data-platform/token/#/ 上申请key填入即可
+    lat_lon: "", //请填写经纬度,直接从谷歌地图中获取即可
+    lang: 'zh', //语言,请不要修改
+    uv: true, //紫外线显示,false则不显示
+    apparent: true, //体感温度显示,false则不显示
+    tips: true //空气质量建议显示,false则不显示
+}
 ```
 
 #### Task
