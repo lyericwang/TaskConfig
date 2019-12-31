@@ -1,0 +1,2 @@
+# TaskConfig
+Quantumult task config
