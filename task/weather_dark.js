@@ -82,18 +82,11 @@ function aqi(weatherInfo) {
         var aqi = obj1.data.aqi;
         var loc = obj1.data.city.name;
         try {
-            console.log(loc);
-            var locArr = loc.split(",");
-            if (locArr.length >= 2) {
-                console.log(locArr[1]);
-                var placeArr = locArr[1].split("(");
-                if (placeArr.length >= 2) {
-                    console.log(locArr[1]);
-                    loc = placeArr[1].replace(")", "") + " ";
-                } else {
-                    console.log(locArr[0]);
-                    loc = placeArr[0];
-                }
+            var locArr = loc.split(/[(),，（）]/)
+            if (locArr.length >= 4) {
+                loc = locArr[2];
+            } else if (locArr.length >= 2) {
+                loc = locArr[1];
             }
         } catch (e) {
             loc = '';
