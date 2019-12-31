@@ -84,9 +84,11 @@ function aqi(weatherInfo) {
         try {
             var locArr = loc.split(/[(),，（）]/)
             if (locArr.length >= 4) {
-                loc = locArr[2];
+                loc = locArr[2] + " ";
             } else if (locArr.length >= 2) {
-                loc = locArr[1];
+                loc = locArr[1] + " ";
+            } else {
+                loc = "";//此时会很长,还不如不显示了
             }
         } catch (e) {
             loc = '';
