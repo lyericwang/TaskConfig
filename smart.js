@@ -49,7 +49,7 @@ if (isSurge) {
     $task = {
         fetch: url => {
             //为了兼容qx中fetch的写法,所以永不reject
-            return new Promise((respove, reject) => {
+            return new Promise((resolve, reject) => {
                 if (url.method == 'POST') {
                     $httpClient.post(url, (error, response, data) => {
                         response.body = data;
