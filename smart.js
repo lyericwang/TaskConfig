@@ -1,28 +1,28 @@
 /*
     本作品用于QuantumultX和Surge之间js执行方法的转换
-    您只需书写其中任一软件的js,然后在您的js最后追加上此段js即可
+    您只需书写其中任一软件的js,然后在您的js最【前面】追加上此段js即可
     无需担心影响执行问题,具体原理是将QX和Surge的方法转换为互相可调用的方法
     尚未测试是否支持import的方式进行使用,因此暂未export
     如有问题或您有更好的改进方案,请前往 https://github.com/sazs34/TaskConfig/issues 提交内容,或直接进行pull request
     您也可直接在tg中联系@wechatu
 */
 // #region 固定头部
-let isQuantumultX = $task === undefined; //判断当前运行环境是否是qx
-let isSurge = $httpClient === undefined; //判断当前运行环境是否是surge
+let isQuantumultX = $task !== undefined; //判断当前运行环境是否是qx
+let isSurge = $httpClient !== undefined; //判断当前运行环境是否是surge
 // http请求
-let $task = isQuantumultX ? $task : {};
-let $httpClient = isSurge ? $httpClient : {};
+var $task = isQuantumultX ? $task : {};
+var $httpClient = isSurge ? $httpClient : {};
 // cookie读写
-let $prefs = isQuantumultX ? $prefs : {};
-let $persistentStore = isSurge ? $persistentStore : {};
+var $prefs = isQuantumultX ? $prefs : {};
+var $persistentStore = isSurge ? $persistentStore : {};
 // 消息通知
-let $notify = isQuantumultX ? $notify : {};
-let $notification = isSurge ? $notification : {};
+var $notify = isQuantumultX ? $notify : {};
+var $notification = isSurge ? $notification : {};
 // #endregion 固定头部
 
 // #region 网络请求专用转换
 if (isQuantumultX) {
-    let errorInfo = {
+    var errorInfo = {
         error: ''
     };
     $httpClient = {
