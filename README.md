@@ -7,6 +7,53 @@
 
 `文中所有获取Cookie的脚本都无需禁用，仅会在cookie变化的时候触发`
 
+## Surge/QuantumultX兼容脚本
+
+> 此功能来源于此git
+>
+> 如有引用或基于此版本的修改请注明即可
+
+*您只有QuantumultX，是否羡慕Surge的脚本？*
+
+*您只有Surge，是否羡慕QuantumultX的脚本？*
+
+**现在无需羡慕啦，目前已支持脚本兼容啦~~**
+
+[具体文件就在根目录下的smart.js](./smart.js)
+
+使用也非常简单:
+
+将smart.js中的内容拷贝到你想使用的脚本最前面,就可以了呢
+
+### 实例
+
+你原本的脚本是这样的
+
+```javascript
+//这里是原来的脚本
+我是surge的脚本
+我是surge的脚本
+我是surge的脚本
+我是surge的脚本
+```
+
+把[smart.js](./smart.js)拷贝进去
+
+```
+//这里是smart.js
+我是smart.js的内容
+我是smart.js的内容
+我是smart.js的内容
+
+//这里是原来的脚本
+我是surge的脚本
+我是surge的脚本
+我是surge的脚本
+我是surge的脚本
+```
+
+这个样子就可以了
+
 ## 签到
 
 ### 百度贴吧
