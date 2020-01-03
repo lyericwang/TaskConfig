@@ -1,11 +1,58 @@
 # TaskConfig
-> QuantumultX专用的任务执行
+> QuantumultX专用的任务执行，作者没有Surge因此无法进行适配，请谅解…
 
 `文中所有获取Cookie的脚本都无需禁用，仅会在cookie变化的时候触发`
 
 `文中所有获取Cookie的脚本都无需禁用，仅会在cookie变化的时候触发`
 
 `文中所有获取Cookie的脚本都无需禁用，仅会在cookie变化的时候触发`
+
+## Surge/QuantumultX兼容脚本
+
+> 此功能来源于此git
+>
+> 如有引用或基于此版本的修改请注明即可
+
+只要在您的脚本最前面追加上这段js,就可以在surge和qx上直接运行,简单粗暴
+
+[具体文件就在根目录下的smart.js](./smart.js)
+
+使用也非常简单:
+
+将[smart.js](./smart.js)中的内容拷贝到你想使用的脚本**最前面**,就可以了呢
+
+### 示例
+
+你原本的脚本是这样的
+
+```javascript
+//这里是原来的脚本
+我是surge的脚本
+我是surge的脚本
+我是surge的脚本
+```
+
+把[smart.js](./smart.js)拷贝进去
+
+```
+//这里是smart.js的内容
+我是smart.js的内容
+我是smart.js的内容
+我是smart.js的内容
+
+//这里是原来的脚本
+我是surge的脚本
+我是surge的脚本
+我是surge的脚本
+```
+
+这个样子就可以了
+
+### TIPS
+
+目前是支持了cookie的读写+http请求+消息通知
+
+应该已经足够了,如果您有其他功能需要兼容,也可以在issue中提出
 
 ## 签到
 
@@ -198,7 +245,9 @@ hostname = *.v2ex.com
 >
 > 如有引用或基于此版本的修改请注明即可
 
-![image-20191231172439832](assets/image-20191231172439832.png)
+![image-20200103155051082](assets/image-20200103155051082.png)
+
+![image-20200103155101146](assets/image-20200103155101146.png)
 
 #### API KEY申请
 
@@ -213,17 +262,38 @@ js文件一打开最前面就是这个配置
 
 申请一下两个api的key,再用谷歌地图获取一下你想获取位置的经纬度填入即可
 
-最后三个选项用于精简显示数据,默认都是显示的
-
 ```javascript
 let config = {
-    darksky_api: ``, //从https://darksky.net/dev/ 上申请key填入即可
-    aqicn_api: ``, //从http://aqicn.org/data-platform/token/#/ 上申请key填入即可
-    lat_lon: "", //请填写经纬度,直接从谷歌地图中获取即可
-    lang: 'zh', //语言,请不要修改
-    uv: true, //紫外线显示,false则不显示
-    apparent: true, //体感温度显示,false则不显示
-    tips: true //空气质量建议显示,false则不显示
+    darksky_api: "填这里", //从https://darksky.net/dev/ 上申请key填入即可
+    aqicn_api: "填这里", //从http://aqicn.org/data-platform/token/#/ 上申请key填入即可
+    huweather_apiKey: "faead3de5f42420098c8132b3924cd09", //和风天气APIkey,可自行前往 https://dev.heweather.com/ 进行获取
+    lat_lon: "填这里", //请填写经纬度,直接从谷歌地图中获取即可
+    lang: "zh", //语言,请不要修改
+    show: {
+        log: 0, //调试日志,0为不开启,1为开启,2为开启精简日志
+        icon: true, //是否显示图标信息,不显示会比较精简
+        aqi: true, //空气质量以及风速显示,false则不显示
+        uv: true, //紫外线显示,false则不显示
+        apparent: true, //体感温度显示,false则不显示
+        lifestyle: { //此处用于显示各项生活指数，可自行调整顺序，顺序越在前面则显示也会靠前，如果您不想查看某一指数，置为false即可，想看置为true即可
+            comf: false, //舒适度指数,
+            cw: false, //洗车指数,
+            drsg: true, //穿衣指数,
+            flu: false, //感冒指数,
+            sport: false, //运动指数,
+            trav: false, //旅游指数,
+            uv: false, //紫外线指数,
+            air: false, //空气污染扩散条件指数,
+            ac: false, //空调开启指数,
+            ag: false, //过敏指数,
+            gl: false, //太阳镜指数,
+            mu: false, //化妆指数,
+            airc: false, //晾晒指数,
+            ptfc: false, //交通指数,
+            fsh: false, //钓鱼指数,
+            spi: false, //防晒指数
+        }
+    }
 }
 ```
 
