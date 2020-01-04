@@ -14,8 +14,8 @@ let config = {
         template: {
             title: `$[city] $[summary]`,
             subtitle: `$[weatherIcon]$[weather] $[temperature_min] ~ $[temperature_max]℃ ☔️降雨概率 $[precipProbability]％`,
-            detail: `$[aqi]($[aqiDesc]) $[windSpeed] $[windDir]
-$[uv]($[uvDesc]) $[currentHumidity]
+            detail: `🥵空气质量 $[aqi]($[aqiDesc]) $[windSpeed] $[windDir]
+👀紫外线指数 $[uv]($[uvDesc]) $[currentHumidity]
 🌡体感温度 $[apparentTemperature_min] ~ $[apparentTemperature_max]℃
 $[lifeStyle]`
         },
@@ -254,7 +254,7 @@ function renderTemplate() {
         //天气描述(晴/雨/雪等)
         weather: `${weatherInfo.heweather.now.cond_txt||getDarkskyWeatherDesc(weatherInfo.darksky.hourly.icon)}`,
         //当前温度
-        currentTemperature: `${weatherInfo.heweather.now.tmp}℃`,
+        currentTemperature: `${weatherInfo.heweather.now.tmp}`,
         //温度最低值
         temperature_min: `${Math.round(weatherInfo.heweather.daily.tmp_min||weatherInfo.darksky.daily.temperatureMin}`,
         //温度最高值
@@ -266,25 +266,25 @@ function renderTemplate() {
         //降雨概率
         precipProbability: `${weatherInfo.heweather.daily.pop||(Number(weatherInfo.darksky.daily.precipProbability) * 100).toFixed(0)}`,
         //空气质量
-        aqi: `${config.show.icon?'😷':''}空气质量 ${weatherInfo.aqicn.aqiInfo.aqi||"UNKNOW"}`,
+        aqi: `${weatherInfo.aqicn.aqiInfo.aqi||"UNKNOW"}`,
         //空气质量描述
         aqiDesc: `${weatherInfo.aqicn.aqiInfo.aqiDesc}`,
         //全天风速
-        windSpeed: `${weatherInfo.heweather.daily.wind_spd}km/h`,
+        windSpeed: `${weatherInfo.heweather.daily.wind_spd}`,
         //当前风速
-        currentWindSpeed: `${weatherInfo.heweather.now.wind_spd}km/h`,
+        currentWindSpeed: `${weatherInfo.heweather.now.wind_spd}`,
         //全天风向
         windDir: `${weatherInfo.heweather.daily.wind_dir}`,
         //当前风向
         currentWindDir: `${weatherInfo.heweather.now.wind_dir}`,
         //全天风力
-        windPower: `${weatherInfo.heweather.daily.wind_sc}级`,
+        windPower: `${weatherInfo.heweather.daily.wind_sc}`,
         //当前风力
-        currentWindPower: `${weatherInfo.heweather.now.wind_sc}级`,
+        currentWindPower: `${weatherInfo.heweather.now.wind_sc}`,
         //全天相对湿度
-        humidity: `湿度 ${weatherInfo.heweather.daily.hum}%`,
+        humidity: `${weatherInfo.heweather.daily.hum}%`,
         //当前相对湿度
-        currentHumidity: `湿度 ${weatherInfo.heweather.now.hum}%`,
+        currentHumidity: `${weatherInfo.heweather.now.hum}%`,
         //全天大气压
         atmosphere: `${weatherInfo.heweather.daily.pres}Pa`,
         //当前大气压
@@ -294,7 +294,7 @@ function renderTemplate() {
         //当前能见度
         currentVisibility: `${weatherInfo.heweather.now.vis}km`,
         //紫外线等级
-        uv: `${config.show.icon?'🌚':''}紫外线指数${weatherInfo.heweather.daily.uv_index||weatherInfo.darksky.daily.uvIndex}`,
+        uv: `${weatherInfo.heweather.daily.uv_index||weatherInfo.darksky.daily.uvIndex}`,
         //紫外线描述
         uvDesc: `${getUVDesc(weatherInfo.heweather.daily.uv_index||weatherInfo.darksky.daily.uvIndex)}`,
         //日出时间
@@ -446,22 +446,22 @@ function getAqiInfo(aqi) {
     var aqiDesc = "";
     var aqiWarning = "";
     if (aqi > 300) {
-        aqiDesc = `${config.show.icon?'🟤':''}严重污染`;
+        aqiDesc = `🟤严重污染`;
         aqiWarning = "儿童、老人、呼吸系统等疾病患者及一般人群停止户外活动";
     } else if (aqi > 200) {
-        aqiDesc = `${config.show.icon?'🟣':''}重度污染`;
+        aqiDesc = `🟣重度污染`;
         aqiWarning = "儿童、老人、呼吸系统等疾病患者及一般人群停止或减少户外运动";
     } else if (aqi > 150) {
-        aqiDesc = `${config.show.icon?'🔴':''}中度污染`;
+        aqiDesc = `🔴中度污染`;
         aqiWarning = "儿童、老人、呼吸系统等疾病患者及一般人群减少户外活动";
     } else if (aqi > 100) {
-        aqiDesc = `${config.show.icon?'🟠':''}轻度污染`;
+        aqiDesc = `🟠轻度污染`;
         aqiWarning = "老人、儿童、呼吸系统等疾病患者减少长时间、高强度的户外活动";
     } else if (aqi > 50) {
-        aqiDesc = `${config.show.icon?'🟡':''}良好`;
+        aqiDesc = `🟡良好`;
         aqiWarning = "极少数敏感人群应减少户外活动";
     } else {
-        aqiDesc = `${config.show.icon?'🟢':''}优`;
+        aqiDesc = `🟢优`;
     }
     return {
         aqi,
