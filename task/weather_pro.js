@@ -124,10 +124,34 @@ function aqicn() {
         }
     }, reason => {
         record(`天气数据获取-B2-${reason.error}`);
-        //确保最大成功率吧,不然其中一个接口挂掉了就全部崩了,很难受
-        check('waqi', false)
+        //获取精确数据失败后，直接获取粗略信息即可
+        heweatherAir();
     });
 }
+
+function heweatherAir() {
+    var hurl = {
+        url: `https://free-api.heweather.net/s6/air/now?location=auto_ip&key=${config.huweather_apiKey}`,
+    };
+
+    $task.fetch(hurl).then(response => {
+        try {
+            record(`天气数据获取F1-${response.body}`);
+            var heObj = JSON.parse(response.body);
+            weatherInfo.aqicn.aqiInfo = {
+                ...getAqiInfo(heObj.HeWeather6[0].air_now_city.aqi)
+            };
+            check('waqi', true)
+        } catch (e) {
+            console.log(`天气数据F获取报错${JSON.stringify(e)}`)
+        }
+    }, reason => {
+        record(`天气数据获取-F2-${reason.error}`);
+        //因为此接口出错率还挺高的,所以即使报错我们也不处理,该返回什么就返回什么好了
+        check('waqi', false)
+    })
+}
+
 
 function heweatherNow() {
     var hurl = {
