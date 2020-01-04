@@ -123,6 +123,8 @@ let config = {
 >
 > 如有引用或基于此版本的修改请注明即可
 
+测试中，请勿使用
+
 `此版本适用于能够耐心查看文件内容(最起码配置信息)的人`
 
 `PRO版天气仅个人使用,不接受任何报错任何咨询`
@@ -155,7 +157,6 @@ let config = {
     log: 2, //调试日志,0为不开启,1为开启,2为开启精简日志
     useParallel: 1, //接口读取方式:0并行1串行(1的速度比较快,0的速度稍慢一些,暂时直接用1就好了)
     show: {
-        icon: true, //是否显示图标信息,不显示会比较精简
         template: { //定制化信息
             title: `$[city] $[summary]`,
             subtitle: `$[weather] $[temperature] $[precipProbability]`,
