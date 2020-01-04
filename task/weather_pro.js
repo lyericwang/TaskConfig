@@ -13,10 +13,10 @@ let config = {
     show: {
         template: {
             title: `$[city] $[summary]`,
-            subtitle: `$[weatherIcon]$[weather] $[temperature_min] ~ $[temperature_max]°C ☔️降雨概率 $[precipProbability]%`,
+            subtitle: `$[weatherIcon]$[weather] $[temperatureMin] ~ $[temperatureMax]°C ☔️降雨概率 $[precipProbability]%`,
             detail: `🥵空气质量 $[aqi]($[aqiDesc]) $[windSpeed]km/h $[windDir]
 👀紫外线指数 $[uv]($[uvDesc]) $[currentHumidity]
-🌡体感温度 $[apparentTemperature_min] ~ $[apparentTemperature_max]°C
+🌡体感温度 $[apparentTemperatureMin] ~ $[apparentTemperatureMax]°C
 $[lifeStyle]`
         },
         lifestyle: { //此处用于显示各项生活指数，可自行调整顺序，顺序越在前面则显示也会靠前，如果您不想查看某一指数，置为false即可，想看置为true即可
@@ -261,13 +261,13 @@ function renderTemplate() {
         //当前温度
         currentTemperature: `${weatherInfo.heweather.now.tmp}`,
         //温度最低值
-        temperature_min: `${Math.round(weatherInfo.heweather.daily.tmp_min||weatherInfo.darksky.daily.temperatureMin)}`,
+        temperatureMin: `${Math.round(weatherInfo.heweather.daily.tmp_min||weatherInfo.darksky.daily.temperatureMin)}`,
         //温度最高值
-        temperature_max: `${Math.round(weatherInfo.heweather.daily.tmp_max||weatherInfo.darksky.daily.temperatureMax)}`,
+        temperatureMax: `${Math.round(weatherInfo.heweather.daily.tmp_max||weatherInfo.darksky.daily.temperatureMax)}`,
         //体感温度最低值
-        apparentTemperature_min: `${Math.round(weatherInfo.darksky.daily.apparentTemperatureLow)}`,
+        apparentTemperatureMin: `${Math.round(weatherInfo.darksky.daily.apparentTemperatureLow)}`,
         //体感温度最高值
-        apparentTemperature_max: `${Math.round(weatherInfo.darksky.daily.apparentTemperatureHigh)}`,
+        apparentTemperatureMax: `${Math.round(weatherInfo.darksky.daily.apparentTemperatureHigh)}`,
         //降雨概率
         precipProbability: `${weatherInfo.heweather.daily.pop||(Number(weatherInfo.darksky.daily.precipProbability) * 100).toFixed(0)}`,
         //空气质量图标
