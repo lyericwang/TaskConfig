@@ -13,17 +13,17 @@ let config = {
     show: {
         template: {
             title: `$[city] $[summary]`,
-            subtitle: `$[weatherIcon]$[weather] $[temperature_min] ~ $[temperature_max]℃ ☔️降雨概率 $[precipProbability]％`,
-            detail: `🥵空气质量 $[aqi]($[aqiDesc]) $[windSpeed] $[windDir]
+            subtitle: `$[weatherIcon]$[weather] $[temperature_min] ~ $[temperature_max]°C ☔️降雨概率 $[precipProbability]%`,
+            detail: `🥵空气质量 $[aqi]($[aqiDesc]) $[windSpeed]km/h $[windDir]
 👀紫外线指数 $[uv]($[uvDesc]) $[currentHumidity]
-🌡体感温度 $[apparentTemperature_min] ~ $[apparentTemperature_max]℃
+🌡体感温度 $[apparentTemperature_min] ~ $[apparentTemperature_max]°C
 $[lifeStyle]`
         },
         lifestyle: { //此处用于显示各项生活指数，可自行调整顺序，顺序越在前面则显示也会靠前，如果您不想查看某一指数，置为false即可，想看置为true即可
-            comf: true, //舒适度指数,
-            cw: false, //洗车指数,
             drsg: true, //穿衣指数,
             flu: true, //感冒指数,
+            comf: true, //舒适度指数,
+            cw: false, //洗车指数,
             sport: false, //运动指数,
             trav: false, //旅游指数,
             uv: true, //紫外线指数,
@@ -246,17 +246,22 @@ var lineBreak = `
 
 function renderTemplate() {
     const map = {
-        //城市名称
-        city: weatherInfo.heweather.basic.location || getCityInfo(weatherInfo.aqicn.data.city.name) || "UNKNOW",
+        //省
+        province: weatherInfo.heweather.basic.admin_area,
+        //市
+        city: weatherInfo.heweather.basic.parent_city,
+        //区
+        district: weatherInfo.heweather.basic.location || getCityInfo(weatherInfo.aqicn.data.city.name) || "UNKNOW",
         //全天气候变化概述
         summary: `${weatherInfo.darksky.hourly.summary}`,
+        //天气图标
         weatherIcon: `${getHeweatherIcon(weatherInfo.heweather.now.cond_code)||getDarkskyWeatherIcon(weatherInfo.darksky.hourly.icon)}`,
         //天气描述(晴/雨/雪等)
         weather: `${weatherInfo.heweather.now.cond_txt||getDarkskyWeatherDesc(weatherInfo.darksky.hourly.icon)}`,
         //当前温度
         currentTemperature: `${weatherInfo.heweather.now.tmp}`,
         //温度最低值
-        temperature_min: `${Math.round(weatherInfo.heweather.daily.tmp_min||weatherInfo.darksky.daily.temperatureMin}`,
+        temperature_min: `${Math.round(weatherInfo.heweather.daily.tmp_min||weatherInfo.darksky.daily.temperatureMin)}`,
         //温度最高值
         temperature_max: `${Math.round(weatherInfo.heweather.daily.tmp_max||weatherInfo.darksky.daily.temperatureMax)}`,
         //体感温度最低值
@@ -265,10 +270,14 @@ function renderTemplate() {
         apparentTemperature_max: `${Math.round(weatherInfo.darksky.daily.apparentTemperatureHigh)}`,
         //降雨概率
         precipProbability: `${weatherInfo.heweather.daily.pop||(Number(weatherInfo.darksky.daily.precipProbability) * 100).toFixed(0)}`,
+        //空气质量图标
+        aqiIcon: `${weatherInfo.aqicn.aqiInfo.aqiIcon}`,
         //空气质量
         aqi: `${weatherInfo.aqicn.aqiInfo.aqi||"UNKNOW"}`,
         //空气质量描述
         aqiDesc: `${weatherInfo.aqicn.aqiInfo.aqiDesc}`,
+        //空气质量警告(提示)
+        aqiWarning: `${weatherInfo.aqicn.aqiInfo.aqiWarning}`,
         //全天风速
         windSpeed: `${weatherInfo.heweather.daily.wind_spd}`,
         //当前风速
@@ -282,17 +291,17 @@ function renderTemplate() {
         //当前风力
         currentWindPower: `${weatherInfo.heweather.now.wind_sc}`,
         //全天相对湿度
-        humidity: `${weatherInfo.heweather.daily.hum}%`,
+        humidity: `${weatherInfo.heweather.daily.hum}`,
         //当前相对湿度
-        currentHumidity: `${weatherInfo.heweather.now.hum}%`,
+        currentHumidity: `${weatherInfo.heweather.now.hum}`,
         //全天大气压
-        atmosphere: `${weatherInfo.heweather.daily.pres}Pa`,
+        atmosphere: `${weatherInfo.heweather.daily.pres}`,
         //当前大气压
-        currentAtmosphere: `${weatherInfo.heweather.now.pres}Pa`,
+        currentAtmosphere: `${weatherInfo.heweather.now.pres}`,
         //全天能见度
-        visibility: `${weatherInfo.heweather.daily.vis}km`,
+        visibility: `${weatherInfo.heweather.daily.vis}`,
         //当前能见度
-        currentVisibility: `${weatherInfo.heweather.now.vis}km`,
+        currentVisibility: `${weatherInfo.heweather.now.vis}`,
         //紫外线等级
         uv: `${weatherInfo.heweather.daily.uv_index||weatherInfo.darksky.daily.uvIndex}`,
         //紫外线描述
@@ -444,27 +453,35 @@ function getCityInfo(name) {
 
 function getAqiInfo(aqi) {
     var aqiDesc = "";
+    var aqiIcon = "";
     var aqiWarning = "";
     if (aqi > 300) {
-        aqiDesc = `🟤严重污染`;
+        aqiIcon = `🟤`;
+        aqiDesc = `严重污染`;
         aqiWarning = "儿童、老人、呼吸系统等疾病患者及一般人群停止户外活动";
     } else if (aqi > 200) {
-        aqiDesc = `🟣重度污染`;
+        aqiIcon = `🟣`;
+        aqiDesc = `重度污染`;
         aqiWarning = "儿童、老人、呼吸系统等疾病患者及一般人群停止或减少户外运动";
     } else if (aqi > 150) {
-        aqiDesc = `🔴中度污染`;
+        aqiIcon = `🔴`;
+        aqiDesc = `中度污染`;
         aqiWarning = "儿童、老人、呼吸系统等疾病患者及一般人群减少户外活动";
     } else if (aqi > 100) {
-        aqiDesc = `🟠轻度污染`;
+        aqiIcon = `🟠`;
+        aqiDesc = `轻度污染`;
         aqiWarning = "老人、儿童、呼吸系统等疾病患者减少长时间、高强度的户外活动";
     } else if (aqi > 50) {
-        aqiDesc = `🟡良好`;
+        aqiIcon = `🟡`;
+        aqiDesc = `良好`;
         aqiWarning = "极少数敏感人群应减少户外活动";
     } else {
-        aqiDesc = `🟢优`;
+        aqiIcon = `🟢`;
+        aqiDesc = `优`;
     }
     return {
         aqi,
+        aqiIcon,
         aqiDesc,
         aqiWarning
     };
