@@ -1,6 +1,6 @@
 /*
 具体配置可见
-https://github.com/sazs34/TaskConfig#%E5%A4%A9%E6%B0%94
+https://github.com/sazs34/TaskConfig/blob/master/assets/weather_pro.md
  */
 let config = {
     darksky_api: "", //从https://darksky.net/dev/ 上申请key填入即可
@@ -12,7 +12,7 @@ let config = {
     useParallel: 1, //接口读取方式:0并行1串行(1的速度比较快,0的速度稍慢一些,暂时直接用1就好了)
     show: {
         template: {
-            title: `$[city] $[summary]`,
+            title: `$[city]$[district] $[summary]`,
             subtitle: `$[weatherIcon]$[weather] $[temperatureMin] ~ $[temperatureMax]°C ☔️降雨概率 $[precipProbability]%`,
             detail: `🥵空气质量 $[aqi]($[aqiDesc]) $[windSpeed]km/h $[windDir]
 👀紫外线指数 $[uv]($[uvDesc]) $[currentHumidity]
