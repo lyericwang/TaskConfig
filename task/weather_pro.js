@@ -506,12 +506,11 @@ function getUVDesc(daily_uvIndex) {
 function getLifeStyle() {
     var lifeStyle = '';
     if (weatherInfo.heweather.lifestyle && weatherInfo.heweather.lifestyle.length > 0) {
-        console.log("指数信息-" + JSON.stringify(weatherInfo.lifeStyle));
         for (var item in config.show.lifestyle) {
             if (config.show.lifestyle[item]) {
                 var youAreTheOne = weatherInfo.heweather.lifestyle.filter(it => it.type == item);
                 if (youAreTheOne && youAreTheOne.length > 0) {
-                    console.log("指数信息-choose-" + JSON.stringify(youAreTheOne));
+                    record("指数信息-choose-" + JSON.stringify(youAreTheOne));
                     lifeStyle += `${lifeStyle==""?"":lineBreak}${config.show.icon?'💡':''}[${youAreTheOne[0].brf}]${youAreTheOne[0].txt}`;
                 }
             }
