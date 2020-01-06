@@ -68,17 +68,29 @@ if (isSurge) {
             return new Promise((resolve, reject) => {
                 if (url.method == 'POST') {
                     $httpClient.post(url, (error, response, data) => {
-                        response.body = data;
-                        resolve(response, {
-                            error: error
-                        });
+                        if (!error) {
+                            response.body = data;
+                            resolve(response, {
+                                error: error
+                            });
+                        } else {
+                            resolve(null, {
+                                error: error
+                            })
+                        }
                     })
                 } else {
                     $httpClient.get(url, (error, response, data) => {
-                        response.body = data;
-                        resolve(response, {
-                            error: error
-                        });
+                        if (!error) {
+                            response.body = data;
+                            resolve(response, {
+                                error: error
+                            });
+                        } else {
+                            resolve(null, {
+                                error: error
+                            })
+                        }
                     })
                 }
             })
