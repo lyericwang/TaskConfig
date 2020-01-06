@@ -7,9 +7,9 @@ let config = {
     aqicn_api: "", //从http://aqicn.org/data-platform/token/#/ 上申请key填入即可
     huweather_apiKey: "", //和风天气APIkey,可自行前往 https://dev.heweather.com/ 进行获取
     lat_lon: "", //请填写经纬度,直接从谷歌地图中获取即可
-    lang: "zh", //语言,请不要修改
-    log: 0, //调试日志,0为不开启,1为开启,2为开启精简日志
-    useParallel: 1, //接口读取方式:0并行1串行(1的速度比较快,0的速度稍慢一些,暂时直接用1就好了)
+    lang: "zh", //语言,随意切换为您想要的语言哦
+    log: 2, //调试日志,0为不开启,1为开启,2为开启精简日志
+    timeout: 5000, //超时时间,单位毫秒(1000毫秒=1秒),一般不推荐修改[为0则不限制超时时间]
     show: {
         template: {
             title: `$[city]$[district] $[summary]`,
@@ -40,85 +40,105 @@ $[lifeStyle]`
     }
 }
 
-var weatherInfo = {
-    check: { //用于检测接口是否处理完成
-        darksky: 0,
-        aqicn: 0,
-        heweathernow: 0,
-        heweatherdaily: 0,
-        lifestyle: 0,
+const provider = {
+    heweather_now: {
+        api: `https://free-api.heweather.net/s6/weather/now?location=${config.lat_lon.replace(/\s/g, "").replace("，", ",")}&key=${config.huweather_apiKey}`,
+        progress: 0, //处理进度:0需处理1已处理2无需处理9报错
+        timeoutNumber: 0, //超时处理编号
+        data: {
+            basic: {},
+            now: {}
+        },
+        support: ['$[province]', '$[city]', '$[district]', '$[weatherIcon]', '$[weather]', '$[currentTemperature]', '$[currentWindSpeed]', '$[currentWindDir]', '$[currentWindPower]', '$[currentHumidity]', '$[currentAtmosphere]', '$[currentVisibility]']
+    },
+    heweather_daily: {
+        api: `https://free-api.heweather.net/s6/weather/forecast?location=${config.lat_lon.replace(/\s/g, "").replace("，", ",")}&key=${config.huweather_apiKey}`,
+        progress: 0,
+        timeoutNumber: 0,
+        data: {},
+        support: ['$[temperatureMin]', '$[temperatureMax]', '$[precipProbability]', '$[windSpeed]', '$[windDir]', '$[windPower]', '$[humidity]', '$[atmosphere]', '$[visibility]', '$[uv]', '$[uvDesc]', '$[sunrise]', '$[sunset]', '$[moonrise]', '$[moonset]']
+    },
+    heweather_air: {
+        api: `https://free-api.heweather.net/s6/air/now?location=auto_ip&key=${config.huweather_apiKey}`,
+        progress: 0,
+        timeoutNumber: 0,
+        data: {},
+        support: []
+    },
+    heweather_lifestyle: {
+        api: `https://free-api.heweather.net/s6/weather/lifestyle?location=${config.lat_lon.replace(/\s/g, "").replace("，", ",")}&key=${config.huweather_apiKey}`,
+        progress: 0,
+        timeoutNumber: 0,
+        data: {},
+        support: ['$[lifeStyle]']
     },
     darksky: {
-        daily: {},
-        hourly: {}
+        api: `https://api.darksky.net/forecast/${config.darksky_api}/${config.lat_lon.replace(/\s/g, "").replace("，", ",")}?lang=${config.lang}&units=si&exclude=currently,minutely`,
+        progress: 0,
+        timeoutNumber: 0,
+        data: {},
+        support: ['$[summary]', '$[weatherIcon]', '$[weather]', '$[temperatureMin]', '$[temperatureMax]', '$[apparentTemperatureMin]', '$[apparentTemperatureMax]', '$[precipProbability]', '$[uv]', '$[uvDesc]']
     },
     aqicn: {
+        api: `https://api.waqi.info/feed/geo:${config.lat_lon.replace(/\s/g, "").replace("，", ",").replace(/,/, ";")}/?token=${config.aqicn_api}`,
+        progress: 0,
         data: {},
-        aqiInfo: {}
-    },
-    heweather: {
-        basic: {},
-        now: {},
-        daily: {},
-        lifestyle: []
+        support: ['$[aqiIcon]', '$[aqi]', '$[aqiDesc]', '$[aqiWarning]']
     }
-};
+}
 // #region 天气数据获取
 function weather() {
+    support();
     heweatherNow();
-    if (config.useParallel == 1) {
-        heweatherDaily();
-        darksky();
-        aqicn();
-        heweatherLifestyle();
-    }
+    heweatherDaily();
+    darksky();
+    aqicn();
+    heweatherLifestyle();
 }
 //clear-day, partly-cloudy-day, cloudy, clear-night, rain, snow, sleet, wind, fog, or partly-cloudy-night
 //☀️🌤⛅️🌥☁️🌦🌧⛈🌩🌨❄️💧💦🌫☔️☂️ ☃️⛄️
 function darksky() {
-    var durl = {
-        url: `https://api.darksky.net/forecast/${config.darksky_api}/${config.lat_lon}?lang=${config.lang}&units=si&exclude=currently,minutely`
-    };
-
-    $task.fetch(durl).then(response => {
+    if (provider.darksky.progress == 2) return;
+    start("darksky");
+    $task.fetch({
+        url: provider.darksky.api
+    }).then(response => {
         try {
             let darkObj = JSON.parse(response.body);
             record(`天气数据获取-A1-${response.body}`);
             if (darkObj.error) {
                 $notify("DarkApi", "出错啦", darkObj.error);
             }
-            weatherInfo.darksky.daily = darkObj.daily.data[0];
-            weatherInfo.darksky.hourly = darkObj.hourly;
-            record(`天气数据获取-A2-${JSON.stringify(weatherInfo)}`);
+            provider.darksky.data.daily = darkObj.daily.data[0];
+            provider.darksky.data.hourly = darkObj.hourly;
+            record(`天气数据获取-A2`);
             check('darksky', true)
         } catch (e) {
             console.log(`天气数据A获取报错${JSON.stringify(e)}`)
         }
     }, reason => {
         record(`天气数据获取-A3-${reason.error}`);
-        check('lifestyle', false);
-        $notify("Dark Sky", '信息获取失败', reason.error);
+        check('darksky', false);
     });
 }
 
 function aqicn() {
-    let aurl = {
-        url: `https://api.waqi.info/feed/geo:${config.lat_lon.replace(/,/, ";")}/?token=${config.aqicn_api}`,
-        headers: {},
-    }
-    $task.fetch(aurl).then(response => {
+    if (provider.aqicn.progress == 2) return;
+    start("aqicn");
+    $task.fetch({
+        url: provider.aqicn.api
+    }).then(response => {
         try {
             var waqiObj = JSON.parse(response.body);
             if (waqiObj.status == 'error') {
                 $notify("Aqicn", "出错啦", waqiObj.data);
             } else {
                 record(`天气数据获取-B1-${response.body}`);
-                weatherInfo.aqicn.data = waqiObj.data;
-                weatherInfo.aqicn.aqiInfo = {
+                provider.aqicn.data = {
                     ...getAqiInfo(waqiObj.data.aqi)
                 };
             }
-            check('waqi', true)
+            check('aqicn', true)
         } catch (e) {
             console.log(`天气数据B获取报错${JSON.stringify(e)}`)
         }
@@ -129,74 +149,74 @@ function aqicn() {
     });
 }
 
-function heweatherAir() {
-    var hurl = {
-        url: `https://free-api.heweather.net/s6/air/now?location=auto_ip&key=${config.huweather_apiKey}`,
-    };
-
-    $task.fetch(hurl).then(response => {
-        try {
-            record(`天气数据获取F1-${response.body}`);
-            var heObj = JSON.parse(response.body);
-            weatherInfo.aqicn.aqiInfo = {
-                ...getAqiInfo(heObj.HeWeather6[0].air_now_city.aqi)
-            };
-            check('waqi', true)
-        } catch (e) {
-            console.log(`天气数据F获取报错${JSON.stringify(e)}`)
-        }
-    }, reason => {
-        record(`天气数据获取-F2-${reason.error}`);
-        //因为此接口出错率还挺高的,所以即使报错我们也不处理,该返回什么就返回什么好了
-        check('waqi', false)
-    })
-}
-
-
 function heweatherNow() {
-    var hurl = {
-        url: `https://free-api.heweather.net/s6/weather/now?location=${config.lat_lon}&key=${config.huweather_apiKey}`,
-    };
-
-    $task.fetch(hurl).then(response => {
+    start("heweather_now");
+    $task.fetch({
+        url: provider.heweather_now.api
+    }).then(response => {
         try {
             record(`天气数据获取-C1-${response.body}`);
             var heObj = JSON.parse(response.body);
-            weatherInfo.heweather.basic = heObj.HeWeather6[0].basic;
-            weatherInfo.heweather.now = heObj.HeWeather6[0].now;
-            check('heweathernow', true)
+            provider.heweather_now.data.basic = heObj.HeWeather6[0].basic;
+            provider.heweather_now.data.now = heObj.HeWeather6[0].now;
+            check('heweather_now', true)
         } catch (e) {
             console.log(`天气数据C获取报错${JSON.stringify(e)}`)
         }
     }, reason => {
         record(`天气数据获取-C2-${reason.error}`);
         //因为此接口出错率还挺高的,所以即使报错我们也不处理,该返回什么就返回什么好了
-        check('heweathernow', false)
+        check('heweather_now', false)
     })
 }
 
 function heweatherDaily() {
-    var hurl = {
-        url: `https://free-api.heweather.net/s6/weather/forecast?location=${config.lat_lon}&key=${config.huweather_apiKey}`,
-    };
-
-    $task.fetch(hurl).then(response => {
+    if (provider.heweather_daily.progress == 2) return;
+    start("heweather_daily");
+    $task.fetch({
+        url: provider.heweather_daily.api
+    }).then(response => {
         try {
             record(`天气数据获取-D1-${response.body}`);
             var heObj = JSON.parse(response.body);
-            weatherInfo.heweather.daily = heObj.HeWeather6[0].daily_forecast[0];
-            check('heweatherdaily', true)
+            provider.heweather_daily.data = heObj.HeWeather6[0].daily_forecast[0];
+            check('heweather_daily', true)
         } catch (e) {
             console.log(`天气数据D获取报错${JSON.stringify(e)}`)
         }
     }, reason => {
         record(`天气数据获取-D2-${reason.error}`);
         //因为此接口出错率还挺高的,所以即使报错我们也不处理,该返回什么就返回什么好了
-        check('heweatherdaily', false)
+        check('heweather_daily', false)
+    })
+}
+
+function heweatherAir() {
+    if (provider.heweather_air.progress == 2) return;
+    start("heweather_air");
+    $task.fetch({
+        url: provider.heweather_air.api
+    }).then(response => {
+        try {
+            record(`天气数据获取F1-${response.body}`);
+            var heObj = JSON.parse(response.body);
+            provider.heweather_air.data = {
+                ...getAqiInfo(heObj.HeWeather6[0].air_now_city.aqi)
+            };
+            check('heweather_air', true)
+        } catch (e) {
+            console.log(`天气数据F获取报错${JSON.stringify(e)}`)
+        }
+    }, reason => {
+        record(`天气数据获取-F2-${reason.error}`);
+        //因为此接口出错率还挺高的,所以即使报错我们也不处理,该返回什么就返回什么好了
+        check('heweather_air', false)
     })
 }
 
 function heweatherLifestyle() {
+    if (provider.heweather_lifestyle.progress == 2) return;
+    start("heweather_lifestyle");
     var needRequest = false;
     //判断一下是否全部都是false,全false的话,则不需要请求此接口直接返回渲染的数据了
     for (var item in config.show.lifestyle) {
@@ -206,55 +226,35 @@ function heweatherLifestyle() {
         }
     }
     if (needRequest) {
-        var hurl = {
-            url: `https://free-api.heweather.net/s6/weather/lifestyle?location=${config.lat_lon}&key=${config.huweather_apiKey}`,
-        };
-
-        $task.fetch(hurl).then(response => {
+        $task.fetch({
+            url: provider.heweather_lifestyle.api
+        }).then(response => {
             try {
                 record(`天气数据获取-E1-${response.body}`);
                 var heObj = JSON.parse(response.body);
-                weatherInfo.heweather.lifestyle = heObj.HeWeather6[0].lifestyle;
-                check('lifestyle', true)
+                provider.heweather_lifestyle.data = heObj.HeWeather6[0].lifestyle;
+                check('heweather_lifestyle', true)
             } catch (e) {
                 console.log(`天气数据E获取报错${JSON.stringify(e)}`)
             }
         }, reason => {
             record(`天气数据获取-E2-${reason.error}`);
             //因为此接口出错率还挺高的,所以即使报错我们也不处理,该返回什么就返回什么好了
-            check('lifestyle', false)
+            check('heweather_lifestyle', false)
         })
     } else {
-        check('lifestyle', false)
+        check('heweather_lifestyle', false)
     }
 }
 //#endregion
 
 // #region 提醒数据组装
 function check(type, result) {
-    record(`check-${type}-${config.useParallel}-${result}`);
-    switch (type) {
-        case "heweathernow":
-            weatherInfo.check.heweathernow = result ? 1 : 2;
-            if (config.useParallel == 0) heweatherDaily();
-            break;
-        case "heweatherdaily":
-            weatherInfo.check.heweatherdaily = result ? 1 : 2;
-            if (config.useParallel == 0) darksky();
-            break;
-        case "darksky":
-            weatherInfo.check.darksky = result ? 1 : 2;
-            if (config.useParallel == 0) waqi();
-            break;
-        case "waqi":
-            weatherInfo.check.aqicn = result ? 1 : 2;
-            if (config.useParallel == 0) heweatherLifestyle()
-            break;
-        case "lifestyle":
-            weatherInfo.check.lifestyle = result ? 1 : 2;
-            break;
-    }
-    var isAllChecked = weatherInfo.check.heweathernow != 0 && weatherInfo.check.heweatherdaily != 0 && weatherInfo.check.darksky != 0 && weatherInfo.check.aqicn != 0 && weatherInfo.check.lifestyle != 0;
+    record(`check-${type}-${result}`);
+    //支持setTimeout居然不支持clearTimeout,有点难受
+    if (provider[type].progress == 1 || provider[type].progress == 9) return;
+    provider[type].progress = result ? 1 : 9;
+    var isAllChecked = provider.heweather_now.progress != 0 && provider.heweather_daily.progress && provider.darksky.progress != 0 && (provider.aqicn.progress != 0 || provider.heweather_air.progress != 0) && provider.heweather_lifestyle.progress != 0;
     if (isAllChecked) {
         record(`天气数据渲染中[template]`);
         try {
@@ -271,73 +271,73 @@ var lineBreak = `
 function renderTemplate() {
     const map = {
         //省
-        province: weatherInfo.heweather.basic.admin_area,
+        province: provider.heweather_now.data.basic.admin_area,
         //市
-        city: weatherInfo.heweather.basic.parent_city,
+        city: provider.heweather_now.data.basic.parent_city,
         //区
-        district: weatherInfo.heweather.basic.location || getCityInfo(weatherInfo.aqicn.data.city.name) || "UNKNOW",
+        district: provider.heweather_now.data.basic.location || "UNKNOW",
         //全天气候变化概述
-        summary: `${weatherInfo.darksky.hourly.summary}`,
+        summary: `${provider.darksky.data.hourly.summary}`,
         //天气图标
-        weatherIcon: `${getHeweatherIcon(weatherInfo.heweather.now.cond_code)||getDarkskyWeatherIcon(weatherInfo.darksky.hourly.icon)}`,
+        weatherIcon: `${getHeweatherIcon(provider.heweather_now.data.now.cond_code)||getDarkskyWeatherIcon(provider.darksky.data.hourly.icon)}`,
         //天气描述(晴/雨/雪等)
-        weather: `${weatherInfo.heweather.now.cond_txt||getDarkskyWeatherDesc(weatherInfo.darksky.hourly.icon)}`,
+        weather: `${provider.heweather_now.data.now.cond_txt||getDarkskyWeatherDesc(provider.darksky.data.hourly.icon)}`,
         //当前温度
-        currentTemperature: `${weatherInfo.heweather.now.tmp}`,
+        currentTemperature: `${provider.heweather_now.data.now.tmp}`,
         //温度最低值
-        temperatureMin: `${Math.round(weatherInfo.heweather.daily.tmp_min||weatherInfo.darksky.daily.temperatureMin)}`,
+        temperatureMin: `${Math.round(provider.heweather_daily.data.tmp_min||provider.darksky.data.daily.temperatureMin)}`,
         //温度最高值
-        temperatureMax: `${Math.round(weatherInfo.heweather.daily.tmp_max||weatherInfo.darksky.daily.temperatureMax)}`,
+        temperatureMax: `${Math.round(provider.heweather_daily.data.tmp_max||provider.darksky.data.daily.temperatureMax)}`,
         //体感温度最低值
-        apparentTemperatureMin: `${Math.round(weatherInfo.darksky.daily.apparentTemperatureLow)}`,
+        apparentTemperatureMin: `${Math.round(provider.darksky.data.daily.apparentTemperatureLow)}`,
         //体感温度最高值
-        apparentTemperatureMax: `${Math.round(weatherInfo.darksky.daily.apparentTemperatureHigh)}`,
+        apparentTemperatureMax: `${Math.round(provider.darksky.data.daily.apparentTemperatureHigh)}`,
         //降雨概率
-        precipProbability: `${weatherInfo.heweather.daily.pop||(Number(weatherInfo.darksky.daily.precipProbability) * 100).toFixed(0)}`,
+        precipProbability: `${provider.heweather_daily.data.pop||(Number(provider.darksky.data.daily.precipProbability) * 100).toFixed(0)}`,
         //空气质量图标
-        aqiIcon: `${weatherInfo.aqicn.aqiInfo.aqiIcon}`,
+        aqiIcon: `${provider.aqicn.data.aqiIcon||provider.heweather_air.data.aqiIcon}`,
         //空气质量
-        aqi: `${weatherInfo.aqicn.aqiInfo.aqi||"UNKNOW"}`,
+        aqi: `${provider.aqicn.data.aqi||provider.heweather_air.data.aqi}`,
         //空气质量描述
-        aqiDesc: `${weatherInfo.aqicn.aqiInfo.aqiDesc}`,
+        aqiDesc: `${provider.aqicn.data.aqiDesc||provider.heweather_air.data.aqiDesc}`,
         //空气质量警告(提示)
-        aqiWarning: `${weatherInfo.aqicn.aqiInfo.aqiWarning}`,
+        aqiWarning: `${provider.aqicn.data.aqiWarning||provider.heweather_air.data.aqiWarning}`,
         //全天风速
-        windSpeed: `${weatherInfo.heweather.daily.wind_spd}`,
+        windSpeed: `${provider.heweather_daily.data.wind_spd}`,
         //当前风速
-        currentWindSpeed: `${weatherInfo.heweather.now.wind_spd}`,
+        currentWindSpeed: `${provider.heweather_now.data.now.wind_spd}`,
         //全天风向
-        windDir: `${weatherInfo.heweather.daily.wind_dir}`,
+        windDir: `${provider.heweather_daily.data.wind_dir}`,
         //当前风向
-        currentWindDir: `${weatherInfo.heweather.now.wind_dir}`,
+        currentWindDir: `${provider.heweather_now.data.now.wind_dir}`,
         //全天风力
-        windPower: `${weatherInfo.heweather.daily.wind_sc}`,
+        windPower: `${provider.heweather_daily.data.wind_sc}`,
         //当前风力
-        currentWindPower: `${weatherInfo.heweather.now.wind_sc}`,
+        currentWindPower: `${provider.heweather_now.data.now.wind_sc}`,
         //全天相对湿度
-        humidity: `${weatherInfo.heweather.daily.hum}`,
+        humidity: `${provider.heweather_daily.data.hum}`,
         //当前相对湿度
-        currentHumidity: `${weatherInfo.heweather.now.hum}`,
+        currentHumidity: `${provider.heweather_now.data.now.hum}`,
         //全天大气压
-        atmosphere: `${weatherInfo.heweather.daily.pres}`,
+        atmosphere: `${provider.heweather_daily.data.pres}`,
         //当前大气压
-        currentAtmosphere: `${weatherInfo.heweather.now.pres}`,
+        currentAtmosphere: `${provider.heweather_now.data.now.pres}`,
         //全天能见度
-        visibility: `${weatherInfo.heweather.daily.vis}`,
+        visibility: `${provider.heweather_daily.data.vis}`,
         //当前能见度
-        currentVisibility: `${weatherInfo.heweather.now.vis}`,
+        currentVisibility: `${provider.heweather_now.data.now.vis}`,
         //紫外线等级
-        uv: `${weatherInfo.heweather.daily.uv_index||weatherInfo.darksky.daily.uvIndex}`,
+        uv: `${provider.heweather_daily.data.uv_index||provider.darksky.data.daily.uvIndex}`,
         //紫外线描述
-        uvDesc: `${getUVDesc(weatherInfo.heweather.daily.uv_index||weatherInfo.darksky.daily.uvIndex)}`,
+        uvDesc: `${getUVDesc(provider.heweather_daily.data.uv_index||provider.darksky.data.daily.uvIndex)}`,
         //日出时间
-        sunrise: `${weatherInfo.heweather.daily.sr}`,
+        sunrise: `${provider.heweather_daily.data.sr}`,
         //日落时间
-        sunset: `${weatherInfo.heweather.daily.ss}`,
+        sunset: `${provider.heweather_daily.data.ss}`,
         //月出时间
-        moonrise: `${weatherInfo.heweather.daily.mr}`,
+        moonrise: `${provider.heweather_daily.data.mr}`,
         //月落时间
-        moonset: `${weatherInfo.heweather.daily.ms}`,
+        moonset: `${provider.heweather_daily.data.ms}`,
         //生活指数
         lifeStyle: getLifeStyle()
     }
@@ -347,10 +347,11 @@ function renderTemplate() {
         detail: execTemplate(config.show.template.detail, map),
     };
     $notify(notifyInfo.title, notifyInfo.subtitle, notifyInfo.detail);
+    $done({});
 }
 // #endregion
 
-// #region 辅助方法
+// #region 数据处理方法
 function getHeweatherIcon(code) {
     var codeMap = {
         _100: '☀️',
@@ -529,10 +530,10 @@ function getUVDesc(daily_uvIndex) {
 
 function getLifeStyle() {
     var lifeStyle = '';
-    if (weatherInfo.heweather.lifestyle && weatherInfo.heweather.lifestyle.length > 0) {
+    if (provider.heweather_lifestyle.data && provider.heweather_lifestyle.data.length > 0) {
         for (var item in config.show.lifestyle) {
             if (config.show.lifestyle[item]) {
-                var youAreTheOne = weatherInfo.heweather.lifestyle.filter(it => it.type == item);
+                var youAreTheOne = provider.heweather_lifestyle.data.filter(it => it.type == item);
                 if (youAreTheOne && youAreTheOne.length > 0) {
                     record("指数信息-choose-" + JSON.stringify(youAreTheOne));
                     lifeStyle += `${lifeStyle==""?"":lineBreak}${config.show.icon?'💡':''}[${youAreTheOne[0].brf}]${youAreTheOne[0].txt}`;
@@ -541,6 +542,39 @@ function getLifeStyle() {
         }
     }
     return lifeStyle;
+}
+// #endregion
+
+// #region 模板相关
+function start(type) {
+    if (config.timeout > 0) {
+        provider[type].timeoutNumber = setTimeout(() => {
+            check(type, false);
+        }, config.timeout);
+    }
+}
+
+function support() {
+    let regex = /\$\[([a-z,A-Z,0-9]*)\]/g;
+    const template = `${config.show.template.title}${config.show.template.subtitle}${config.show.template.detail}`.match(regex);
+    provider.heweather_now.progress = template.filter((item, filter) => {
+        return provider.heweather_now.support.indexOf(item) != -1;
+    }).length > 0 ? 0 : 2;
+    provider.heweather_daily.progress = template.filter((item, filter) => {
+        return provider.heweather_daily.support.indexOf(item) != -1;
+    }).length > 0 ? 0 : 2;
+    provider.heweather_air.progress = template.filter((item, filter) => {
+        return provider.heweather_air.support.indexOf(item) != -1;
+    }).length > 0 ? 0 : 2;
+    provider.heweather_lifestyle.progress = template.filter((item, filter) => {
+        return provider.heweather_lifestyle.support.indexOf(item) != -1;
+    }).length > 0 ? 0 : 2;
+    provider.darksky.progress = template.filter((item, filter) => {
+        return provider.darksky.support.indexOf(item) != -1;
+    }).length > 0 ? 0 : 2;
+    provider.aqicn.progress = template.filter((item, filter) => {
+        return provider.aqicn.support.indexOf(item) != -1;
+    }).length > 0 ? 0 : 2;
 }
 
 function execTemplate(template, map) {
