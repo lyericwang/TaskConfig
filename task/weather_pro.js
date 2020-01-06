@@ -8,8 +8,8 @@ let config = {
     huweather_apiKey: "", //和风天气APIkey,可自行前往 https://dev.heweather.com/ 进行获取
     lat_lon: "", //请填写经纬度,直接从谷歌地图中获取即可
     lang: "zh", //语言,随意切换为您想要的语言哦
-    log: 2, //调试日志,0为不开启,1为开启,2为开启精简日志
-    timeout: 5000, //超时时间,单位毫秒(1000毫秒=1秒),一般不推荐修改[为0则不限制超时时间]
+    log: 0, //调试日志,0为不开启,1为开启,2为开启精简日志
+    timeout: 0, //超时时间,单位毫秒(1000毫秒=1秒),一般不推荐修改[为0则不限制超时时间]
     show: {
         template: {
             title: `$[city]$[district] $[summary]`,
@@ -76,7 +76,10 @@ const provider = {
         api: `https://api.darksky.net/forecast/${config.darksky_api}/${config.lat_lon.replace(/\s/g, "").replace("，", ",")}?lang=${config.lang}&units=si&exclude=currently,minutely`,
         progress: 0,
         timeoutNumber: 0,
-        data: {},
+        data: {
+            daily: {},
+            hourly: {}
+        },
         support: ['$[summary]', '$[weatherIcon]', '$[weather]', '$[temperatureMin]', '$[temperatureMax]', '$[apparentTemperatureMin]', '$[apparentTemperatureMax]', '$[precipProbability]', '$[uv]', '$[uvDesc]']
     },
     aqicn: {
@@ -277,7 +280,7 @@ function renderTemplate() {
         //区
         district: provider.heweather_now.data.basic.location || "UNKNOW",
         //全天气候变化概述
-        summary: `${provider.darksky.data.hourly.summary}`,
+        summary: `${provider.darksky.data.hourly.summary||""}`,
         //天气图标
         weatherIcon: `${getHeweatherIcon(provider.heweather_now.data.now.cond_code)||getDarkskyWeatherIcon(provider.darksky.data.hourly.icon)}`,
         //天气描述(晴/雨/雪等)
@@ -535,7 +538,7 @@ function getLifeStyle() {
             if (config.show.lifestyle[item]) {
                 var youAreTheOne = provider.heweather_lifestyle.data.filter(it => it.type == item);
                 if (youAreTheOne && youAreTheOne.length > 0) {
-                    record("指数信息-choose-" + JSON.stringify(youAreTheOne));
+                    // record("指数信息-choose-" + JSON.stringify(youAreTheOne));
                     lifeStyle += `${lifeStyle==""?"":lineBreak}${config.show.icon?'💡':''}[${youAreTheOne[0].brf}]${youAreTheOne[0].txt}`;
                 }
             }
