@@ -73,15 +73,19 @@ const provider = {
         support: ['$[lifeStyle]']
     },
     darksky: {
-        api: `https://api.darksky.net/forecast/${config.darksky_api}/${config.lat_lon.replace(/\s/g, "").replace("，", ",")}?lang=${config.lang}&units=si&exclude=currently,minutely`,
+        api: `https://api.darksky.net/forecast/${config.darksky_api}/${config.lat_lon.replace(/\s/g, "").replace("，", ",")}?lang=${config.lang}&units=si`,
         progress: 0,
         timeoutNumber: 0,
         data: {
-            daily: {},
-            hourly: {},
+            daily: {
+                data: []
+            },
+            hourly: {
+                data: []
+            },
             currently: {}
         },
-        support: ['$[summary]', '$[weatherIcon]', '$[weather]', '$[temperatureMin]', '$[temperatureMax]', '$[apparentTemperatureMin]', '$[apparentTemperatureMax]', '$[precipProbability]', '$[uv]', '$[uvDesc]']
+        support: ['$[summary]', '$[weeklySummary]', '$[weatherIcon]', '$[weather]', '$[temperatureMin]', '$[temperatureMax]', '$[apparentTemperatureMin]', '$[apparentTemperatureMax]', '$[precipProbability]', '$[uv]', '$[uvDesc]']
     },
     aqicn: {
         api: `https://api.waqi.info/feed/geo:${config.lat_lon.replace(/\s/g, "").replace("，", ",").replace(/,/, ";")}/?token=${config.aqicn_api}`,
@@ -595,6 +599,7 @@ function support() {
         let regexHourly = /\$\[(hourly\()+([\s\S]+?)(\))+\]/g;
         provider.darksky.progress = (regexDaily.test(config.show.template.detail) || regexHourly.test(config.show.template.detail)) ? 0 : 2;
     }
+    record(`h_n:${provider.heweather_now.progress},h_d:${provider.heweather_daily.progress},h_a:${provider.heweather_air.progress},h_l:${provider.heweather_lifestyle.progress},aq:${provider.aqicn.progress},da:${provider.darksky.progress}`)
 }
 /**
  * 用于普通模板的映射
@@ -604,25 +609,35 @@ function support() {
 function execTemplate(template, map) {
     if (!template) return "";
     let regex = /\$\[([a-z,A-Z,0-9]*)\]/g;
-    for (item of template.match(regex)) {
-        item.match(regex);
-        if (RegExp.$1 && map[RegExp.$1]) {
-            template = template.replace(item, map[RegExp.$1]);
-        } else {
-            template = template.replace(item, "");
+    if (regex.test(template)) {
+        for (item of template.match(regex)) {
+            item.match(regex);
+            if (RegExp.$1 && map[RegExp.$1]) {
+                template = template.replace(item, map[RegExp.$1]);
+            } else {
+                template = template.replace(item, "");
+            }
         }
     }
     return template;
 }
 
 function execArrayTemplate() {
-    execTemplateDaily();
-    execTemplateHourly();
+    try {
+        execTemplateDaily();
+        execTemplateHourly();
+    } catch (e) {
+        console.log(`${JSON.stringify(e)}`)
+    }
+
 }
 
 function execTemplateDaily() {
-    let result = [];
     let regexDaily = /\$\[(daily\()+([\s\S]+?)(\))+\]/g;
+    if (provider.darksky.data.daily.data.length <= 0) {
+        config.show.template.detail.replace(regexDaily, '')
+    }
+    let result = [];
     if (regexDaily.test(config.show.template.detail)) {
         config.show.template.detail.match(regexDaily);
         var rangeTemplate = RegExp.$2; //此处拿到的是要替换的列表显示部分了
@@ -632,18 +647,26 @@ function execTemplateDaily() {
             var singleInfo = rangeTemplate;
             for (item of template) {
                 item.match(regex);
-                if (RegEx.$1 == "month") {
-                    singleInfo = singleInfo.replace(item, daily["time"].toDateTime().Format("MM"));
-                } else if (RegEx.$1 == "day") {
-                    singleInfo = singleInfo.replace(item, daily["time"].toDateTime().Format("dd"));
-                } else if (RegEx.$1 == "weatherIcon") {
+                if (RegExp.$1 == "month") {
+                    singleInfo = singleInfo.replace(item, (`${daily["time"]}`).toDateTime().Format("MM"));
+                } else if (RegExp.$1 == "day") {
+                    singleInfo = singleInfo.replace(item, (`${daily["time"]}`).toDateTime().Format("dd"));
+                } else if (RegExp.$1 == "weatherIcon") {
                     singleInfo = singleInfo.replace(item, getDarkskyWeatherIcon(daily.icon));
-                } else if (RegEx.$1 == "weather") {
+                } else if (RegExp.$1 == "weather") {
                     singleInfo = singleInfo.replace(item, getDarkskyWeatherDesc(daily.icon));
-                } else if (RegEx.$1 == "uvDesc") {
+                } else if (RegExp.$1 == "uvDesc") {
                     singleInfo = singleInfo.replace(item, getUVDesc(daily.uvIndex));
-                } else if (RegEx.$1 == "cloudCover") {
+                } else if (RegExp.$1 == "cloudCover") {
                     singleInfo = singleInfo.replace(item, daily.cloudCover * 100);
+                } else if (RegExp.$1 == "temperatureHigh") {
+                    singleInfo = singleInfo.replace(item, Math.round(daily.temperatureHigh));
+                } else if (RegExp.$1 == "temperatureLow") {
+                    singleInfo = singleInfo.replace(item, Math.round(daily.temperatureLow));
+                } else if (RegExp.$1 == "apparentTemperatureMax") {
+                    singleInfo = singleInfo.replace(item, Math.round(daily.apparentTemperatureMax));
+                } else if (RegExp.$1 == "apparentTemperatureMin") {
+                    singleInfo = singleInfo.replace(item, Math.round(daily.apparentTemperatureMin));
                 } else if (RegExp.$1 && daily[RegExp.$1] != undefined) {
                     singleInfo = singleInfo.replace(item, daily[RegExp.$1]);
                 }
@@ -655,8 +678,11 @@ function execTemplateDaily() {
 }
 
 function execTemplateHourly() {
-    let result = [];
     let regexHourly = /\$\[(hourly\()+([\s\S]+?)(\))+\]/g;
+    if (provider.darksky.data.hourly.data.length <= 0) {
+        config.show.template.detail.replace(regexHourly, '')
+    }
+    let result = [];
     if (regexHourly.test(config.show.template.detail)) {
         config.show.template.detail.match(regexHourly);
         var rangeTemplate = RegExp.$2; //此处拿到的是要替换的列表显示部分了
@@ -666,16 +692,24 @@ function execTemplateHourly() {
             var singleInfo = rangeTemplate;
             for (item of template) {
                 item.match(regex);
-                if (RegEx.$1 == "hour") {
-                    singleInfo = singleInfo.replace(item, hourly["time"].toDateTime().Format("hh"));
-                } else if (RegEx.$1 == "weatherIcon") {
+                if (RegExp.$1 == "month") {
+                    singleInfo = singleInfo.replace(item, (`${hourly["time"]}`).toDateTime().Format("MM"));
+                } else if (RegExp.$1 == "day") {
+                    singleInfo = singleInfo.replace(item, (`${hourly["time"]}`).toDateTime().Format("dd"));
+                } else if (RegExp.$1 == "hour") {
+                    singleInfo = singleInfo.replace(item, (`${hourly["time"]}`).toDateTime().Format("hh"));
+                } else if (RegExp.$1 == "weatherIcon") {
                     singleInfo = singleInfo.replace(item, getDarkskyWeatherIcon(hourly.icon));
-                } else if (RegEx.$1 == "weather") {
+                } else if (RegExp.$1 == "weather") {
                     singleInfo = singleInfo.replace(item, getDarkskyWeatherDesc(hourly.icon));
-                } else if (RegEx.$1 == "uvDesc") {
+                } else if (RegExp.$1 == "uvDesc") {
                     singleInfo = singleInfo.replace(item, getUVDesc(hourly.uvIndex));
-                } else if (RegEx.$1 == "cloudCover") {
+                } else if (RegExp.$1 == "cloudCover") {
                     singleInfo = singleInfo.replace(item, hourly.cloudCover * 100);
+                } else if (RegExp.$1 == "temperature") {
+                    singleInfo = singleInfo.replace(item, Math.round(hourly.temperature));
+                } else if (RegExp.$1 == "apparentTemperature") {
+                    singleInfo = singleInfo.replace(item, Math.round(hourly.apparentTemperature));
                 } else if (RegExp.$1 && hourly[RegExp.$1] != undefined) {
                     singleInfo = singleInfo.replace(item, hourly[RegExp.$1]);
                 }

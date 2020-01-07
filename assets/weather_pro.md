@@ -1,25 +1,12 @@
-## API KEY申请
+## 前言
 
-使用此脚本需要申请key
+为了满足多元化的天气信息查询(其实就是开发者想写着玩而已)
 
-- [Dark Sky API](https://darksky.net/dev)
-- [Aqicn API](http://aqicn.org/data-platform/token/#/)
-- [和风天气API](https://dev.heweather.com/)
+提供了快捷地天气信息查询支持
 
-## 配置项位置
+能够快速地查看`当天天气` `7天天气` `48小时逐小时天气`
 
-在show节点-template,这是一个示例用的模板
-
-```javascript
-{
-    title: `$[city]$[district] $[summary]`,
-    subtitle: `$[weatherIcon]$[weather] $[temperatureMin] ~ $[temperatureMax]°C ☔️降雨概率 $[precipProbability]%`,
-    detail: `🥵空气质量 $[aqi]($[aqiDesc]) 🌬风速$[windSpeed]km/h $[windDir]
-👀紫外线指数 $[uv]($[uvDesc]) 💦湿度$[currentHumidity]%
-🌡体感温度 $[apparentTemperatureMin] ~ $[apparentTemperatureMax]°C 🏋🏻‍♀️气压$[atmosphere]pa
-$[lifeStyle]`
-}
-```
+您可以自由地进行配置,混搭,想怎样就怎样
 
 ## 说明
 
@@ -35,7 +22,97 @@ $[lifeStyle]`
 $[city] $[weather] --@wechatu
 ```
 
+## 示例
 
+### 每日天气查看
+
+![image-20200107183838878](assets/image-20200107183838878.png)
+
+#### 对应模板
+
+```javascript
+{
+    title: `$[city]$[district] $[summary]`,
+    subtitle: `$[weatherIcon]$[weather] $[temperatureMin] ~ $[temperatureMax]°C ☔️降雨概率 $[precipProbability]%`,
+    detail: `🥵空气质量 $[aqi]($[aqiDesc]) 🌬风速$[windSpeed]km/h $[windDir]
+👀紫外线指数 $[uv]($[uvDesc]) 💦湿度$[currentHumidity]%
+🌡体感温度 $[apparentTemperatureMin] ~ $[apparentTemperatureMax]°C 🏋🏻‍♀️气压$[atmosphere]pa
+$[lifeStyle]`
+}
+```
+
+### 一周天气查看
+
+![image-20200107183850800](assets/image-20200107183850800.png)
+
+#### 对应模板
+
+```javascript
+{
+    title: `$[city]$[district] $[weeklySummary]`,
+    subtitle: ``,
+    detail: `$[daily($[month]月$[day]日 $[weatherIcon]$[weather]    $[temperatureLow]~$[temperatureHigh]°C)]`
+}
+```
+
+
+
+### 48小时天气查看
+
+![image-20200107183901094](assets/image-20200107183901094.png)
+
+#### 对应模板
+
+```javascript
+{
+    title: `$[city]$[district] $[weeklySummary]`,
+    subtitle: ``,
+    detail: `$[hourly($[month]/$[day] $[hour]:00 $[weatherIcon]$[weather] $[temperature]°C 湿度$[humidity]%)]`
+}
+```
+
+### 混搭
+
+![image-20200107184718882](assets/image-20200107184718882.png)
+
+#### 对应模板
+
+```
+{
+    title: `$[city]$[district] $[summary]`,
+    subtitle: `$[weatherIcon]$[weather] $[temperatureMin] ~ $[temperatureMax]°C ☔️降雨概率 $[precipProbability]%`,
+    detail: `🥵空气质量 $[aqi]($[aqiDesc]) 🌬风速$[windSpeed]km/h $[windDir]
+👀紫外线指数 $[uv]($[uvDesc]) 💦湿度$[currentHumidity]%
+🌡体感温度 $[apparentTemperatureMin] ~ $[apparentTemperatureMax]°C 🏋🏻‍♀️气压$[atmosphere]pa
+
+$[hourly($[month]/$[day] $[hour]:00 $[weatherIcon]$[weather] $[temperature]°C 湿度$[humidity]%)]`
+}
+```
+
+
+
+## API KEY申请
+
+使用此脚本需要申请key
+
+- [Dark Sky API](https://darksky.net/dev)
+- [Aqicn API](http://aqicn.org/data-platform/token/#/)
+- [和风天气API](https://dev.heweather.com/) (注意生成key类型选择 WebApi)
+
+## 配置项位置
+
+在show节点-template,这是一个示例用的模板
+
+```javascript
+{
+    title: `$[city]$[district] $[summary]`,
+    subtitle: `$[weatherIcon]$[weather] $[temperatureMin] ~ $[temperatureMax]°C ☔️降雨概率 $[precipProbability]%`,
+    detail: `🥵空气质量 $[aqi]($[aqiDesc]) 🌬风速$[windSpeed]km/h $[windDir]
+👀紫外线指数 $[uv]($[uvDesc]) 💦湿度$[currentHumidity]%
+🌡体感温度 $[apparentTemperatureMin] ~ $[apparentTemperatureMax]°C 🏋🏻‍♀️气压$[atmosphere]pa
+$[lifeStyle]`
+}
+```
 
 ## 可配置的选项
 
@@ -102,6 +179,8 @@ $[hourly($[hour]点 $[weatherIcon]$[weather] 温度$[temperature]℃)]
 
 |         配置项         |          功能           | 单位 |   示例    |
 | :--------------------: | :---------------------: | :--: | :-------: |
+|  $[month]  |   月份   |  月  |       10       |
+|   $[day]   |   日期   |  日  |       05       |
 |        $[hour]         |          小时           |      |    12     |
 |       $[summary]       |          概述           |      | 多云转阴  |
 |     $[weatherIcon]     |        天气图标         |      |     ☀️     |
