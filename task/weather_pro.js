@@ -41,6 +41,7 @@ $[lifeStyle]`
     }
 }
 
+//#region QX+Surge兼容脚本
 /*
     本作品用于QuantumultX和Surge之间js执行方法的转换
     您只需书写其中任一软件的js,然后在您的js最【前面】追加上此段js即可
@@ -179,6 +180,7 @@ if (isSurge) {
         $notification.post(title, subTitle, detail);
     }
 }
+// #endregion
 // #endregion
 
 const provider = {
