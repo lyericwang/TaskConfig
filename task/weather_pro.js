@@ -582,9 +582,9 @@ function support() {
     provider.heweather_daily.progress = template.filter((item, filter) => {
         return provider.heweather_daily.support.indexOf(item) != -1;
     }).length > 0 ? 0 : 2;
-    provider.heweather_air.progress = template.filter((item, filter) => {
-        return provider.heweather_air.support.indexOf(item) != -1;
-    }).length > 0 ? 0 : 2;
+    // provider.heweather_air.progress = template.filter((item, filter) => {
+    //     return provider.heweather_air.support.indexOf(item) != -1;
+    // }).length > 0 ? 0 : 2;
     provider.heweather_lifestyle.progress = template.filter((item, filter) => {
         return provider.heweather_lifestyle.support.indexOf(item) != -1;
     }).length > 0 ? 0 : 2;
