@@ -71,111 +71,115 @@ const config = {
 //#region 百度贴吧
 
 function sign_baidu_tieba() {
-    if (!config.global.sign.baidu_tieba) {
-        record(`【${config.baidu_tieba.name}】未开启签到`);
-        return;
-    }
-    let cookieVal = $prefs.valueForKey(config.baidu_tieba.cookie);
-    let process = config.baidu_tieba.data;
-    let checkIsAllProcessed = () => {
-        if (process.total > process.result.length) return;
-        process.notify = `[${config.baidu_tieba.name}] 总签到${process.result.length}个，成功${process.result.filter(it=>{return it.errorCode==-1||it.errorCode==0}).length}个,失败${process.result.filter(it=>{return it.errorCode==998||it.errorCode==999}).length}`
-        let totalNotify = `
-        【${config.baidu_tieba.name}】签到结果`;
-        for (const res of process.result) {
-            if (res.errorCode == -1) {
-                totalNotify += `[${res.bar}] 已经签到，当前等级${res.level},经验${res.exp}
-`;
-            } else {
-                totalNotify += `[${res.bar}] ${res.errorCode==0?'签到成功':'签到失败'}，${res.errorCode==0?res.errorMsg:('原因：'+res.errorMsg)}
-`;
-            }
+    try {
+        if (!config.global.sign.baidu_tieba) {
+            record(`【${config.baidu_tieba.name}】未开启签到`);
+            return;
         }
-        record(totalNotify)
-        finalNotify();
-    }
-    let signBars = (bars, tbs, index) => {
-        if (index >= bars.index) {
-            checkIsAllProcessed();
-        } else {
-            let bar = bars[index];
-            if (bar.is_sign == 1) {
-                process.result.push({
-                    bar: `${bar.forum_name}`,
-                    level: bar.user_level,
-                    exp: bar.user_exp,
-                    errorCode: -1,
-                    errorMsg: "已签到"
-                });
-                signBars(bars, tbs, ++index);
+        let cookieVal = $prefs.valueForKey(config.baidu_tieba.cookie);
+        let process = config.baidu_tieba.data;
+        let checkIsAllProcessed = () => {
+            if (process.total > process.result.length) return;
+            process.notify = `[${config.baidu_tieba.name}] 总签到${process.result.length}个，成功${process.result.filter(it=>{return it.errorCode==-1||it.errorCode==0}).length}个,失败${process.result.filter(it=>{return it.errorCode==998||it.errorCode==999}).length}`
+            let totalNotify = `
+            【${config.baidu_tieba.name}】签到结果`;
+            for (const res of process.result) {
+                if (res.errorCode == -1) {
+                    totalNotify += `[${res.bar}] 已经签到，当前等级${res.level},经验${res.exp}
+    `;
+                } else {
+                    totalNotify += `[${res.bar}] ${res.errorCode==0?'签到成功':'签到失败'}，${res.errorCode==0?res.errorMsg:('原因：'+res.errorMsg)}
+    `;
+                }
+            }
+            record(totalNotify)
+            finalNotify();
+        }
+        let signBars = (bars, tbs, index) => {
+            if (index >= bars.index) {
+                checkIsAllProcessed();
             } else {
-                config.baidu_tieba.provider.sign.body = `tbs=${tbs}&kw=${bar.forum_name}&ie=utf-8`;
-                config.baidu_tieba.provider.sign.headers.Cookie = cookieVal;
-                $task.fetch(config.baidu_tieba.provider.sign).then(response => {
-                    try {
-                        var addResult = JSON.parse(response.body);
-                        if (addResult.no == 0) {
-                            process.result.push({
-                                bar: bar.forum_name,
-                                errorCode: 0,
-                                errorMsg: `获得${addResult.data.uinfo.cont_sign_num}积分,第${addResult.data.uinfo.user_sign_rank}个签到`
-                            });
-                        } else {
-                            process.result.push({
-                                bar: bar.forum_name,
-                                errorCode: addResult.no,
-                                errorMsg: addResult.error
-                            });
-                        }
-                    } catch (e) {
-                        process.result.push({
-                            bar: bar.forum_name,
-                            errorCode: 998,
-                            errorMsg: '不应存在的错误'
-                        })
-                    }
-                    signBars(bars, tbs, ++index);
-                }, reason => {
+                let bar = bars[index];
+                if (bar.is_sign == 1) {
                     process.result.push({
-                        bar: bar.forum_name,
-                        errorCode: 999,
-                        errorMsg: '接口错误'
+                        bar: `${bar.forum_name}`,
+                        level: bar.user_level,
+                        exp: bar.user_exp,
+                        errorCode: -1,
+                        errorMsg: "已签到"
                     });
                     signBars(bars, tbs, ++index);
+                } else {
+                    config.baidu_tieba.provider.sign.body = `tbs=${tbs}&kw=${bar.forum_name}&ie=utf-8`;
+                    config.baidu_tieba.provider.sign.headers.Cookie = cookieVal;
+                    $task.fetch(config.baidu_tieba.provider.sign).then(response => {
+                        try {
+                            var addResult = JSON.parse(response.body);
+                            if (addResult.no == 0) {
+                                process.result.push({
+                                    bar: bar.forum_name,
+                                    errorCode: 0,
+                                    errorMsg: `获得${addResult.data.uinfo.cont_sign_num}积分,第${addResult.data.uinfo.user_sign_rank}个签到`
+                                });
+                            } else {
+                                process.result.push({
+                                    bar: bar.forum_name,
+                                    errorCode: addResult.no,
+                                    errorMsg: addResult.error
+                                });
+                            }
+                        } catch (e) {
+                            process.result.push({
+                                bar: bar.forum_name,
+                                errorCode: 998,
+                                errorMsg: '不应存在的错误'
+                            })
+                        }
+                        signBars(bars, tbs, ++index);
+                    }, reason => {
+                        process.result.push({
+                            bar: bar.forum_name,
+                            errorCode: 999,
+                            errorMsg: '接口错误'
+                        });
+                        signBars(bars, tbs, ++index);
+                    });
+                }
+            }
+        }
+        let getList = () => {
+            if (!cookieVal) {
+                process.notify = `【${config.baidu_tieba.name}】未获取到cookie`;
+                record(process.notify);
+            } else {
+                config.baidu_tieba.provider.list.headers.Cookie = cookieVal;
+                $task.fetch(config.baidu_tieba.provider.list).then(response => {
+                    var body = JSON.parse(response.body);
+                    var isSuccessResponse = body && body.no == 0 && body.error == "success" && body.data.tbs;
+                    if (isSuccessResponse) {
+                        process.total = body.data.like_forum.length;
+                        if (body.data.like_forum && body.data.like_forum.length > 0) {
+                            signBars(body.data.like_forum, body.data.tbs, 0);
+                        } else {
+                            process.notify = `【${config.baidu_tieba.name}】签到失败-请确认您有关注的贴吧`
+                            record(process.notify);
+
+                        }
+                    } else {
+                        process.notify = `【${config.baidu_tieba.name}】签到失败-${(body && body.error) ? body.error : "接口数据获取失败"}`;
+                        record(process.notify);
+                    }
+
+                }, reason => {
+                    process.notify = `【${config.baidu_tieba.name}】签到失败-未获取到签到列表`;
+                    record(process.notify);
                 });
             }
         }
+        getList();
+    } catch (e) {
+        console.log(`AIO-BaiduTieba-${JSON.stringify(e)}`)
     }
-    let getList = () => {
-        if (!cookieVal) {
-            process.notify = `【${config.baidu_tieba.name}】未获取到cookie`;
-            record(process.notify);
-        } else {
-            config.baidu_tieba.provider.list.headers.Cookie = cookieVal;
-            $task.fetch(config.baidu_tieba.provider.list).then(response => {
-                var body = JSON.parse(response.body);
-                var isSuccessResponse = body && body.no == 0 && body.error == "success" && body.data.tbs;
-                if (isSuccessResponse) {
-                    process.total = body.data.like_forum.length;
-                    if (body.data.like_forum && body.data.like_forum.length > 0) {
-                        signBars(body.data.like_forum, body.data.tbs, 0);
-                    } else {
-                        process.notify = `【${config.baidu_tieba.name}】签到失败-请确认您有关注的贴吧`
-                        record(process.notify);
-
-                    }
-                } else {
-                    process.notify = `【${config.baidu_tieba.name}】签到失败-${(body && body.error) ? body.error : "接口数据获取失败"}`;
-                    record(process.notify);
-                }
-
-            }, reason => {
-                process.notify = `【${config.baidu_tieba.name}】签到失败-未获取到签到列表`;
-                record(process.notify);
-            });
-        }
-    }
-    getList();
 }
 
 //#endregion
