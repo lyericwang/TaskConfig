@@ -13,12 +13,17 @@ let config = {
     show: {
         //普通每天的
         template: {
-            title: `$[city]$[district] $[summary]`,
+            title: `[天气日报] $[summary]`,
             subtitle: `$[weatherIcon]$[weather] $[temperatureMin] ~ $[temperatureMax]°C ☔️降雨概率 $[precipProbability]%`,
-            detail: `🥵空气质量 $[aqi]($[aqiDesc]) 🌬风速$[windSpeed]km/h $[windDir]
-👀紫外线指数 $[uv]($[uvDesc]) 💦湿度$[currentHumidity]%
-🌡体感温度 $[apparentTemperatureMin] ~ $[apparentTemperatureMax]°C 🏋🏻‍♀️气压$[atmosphere]pa
-$[lifeStyle]`
+            detail: `🥵空气质量 $[aqi]($[aqiDesc]) 🍃风速$[windSpeed]km/h $[windDir]
+🌞紫外线指数 $[uv]($[uvDesc]) 💧湿度$[currentHumidity]%
+🌡体感温度 $[apparentTemperatureMin] ~ $[apparentTemperatureMax]°C 💨气压$[atmosphere]pa
+
+[生活指数]
+$[lifeStyle($[icon][$[brf]]$[txt])]
+
+[天气周报]
+$[daily($[month]月$[day]日  $[temperatureLow]~$[temperatureHigh]°C  $[weatherIcon]$[weather])]`
         },
         lifestyle: { //此处用于显示各项生活指数，可自行调整顺序，顺序越在前面则显示也会靠前，如果您不想查看某一指数，置为false即可，想看置为true即可
             drsg: true, //穿衣指数,
@@ -40,148 +45,6 @@ $[lifeStyle]`
         }
     }
 }
-
-//#region QX+Surge兼容脚本
-/*
-    本作品用于QuantumultX和Surge之间js执行方法的转换
-    您只需书写其中任一软件的js,然后在您的js最【前面】追加上此段js即可
-    无需担心影响执行问题,具体原理是将QX和Surge的方法转换为互相可调用的方法
-    尚未测试是否支持import的方式进行使用,因此暂未export
-    如有问题或您有更好的改进方案,请前往 https://github.com/sazs34/TaskConfig/issues 提交内容,或直接进行pull request
-    您也可直接在tg中联系@wechatu
-*/
-// #region 固定头部
-let isQuantumultX = $task !== undefined; //判断当前运行环境是否是qx
-let isSurge = $httpClient !== undefined; //判断当前运行环境是否是surge
-// http请求
-var $task = isQuantumultX ? $task : {};
-var $httpClient = isSurge ? $httpClient : {};
-// cookie读写
-var $prefs = isQuantumultX ? $prefs : {};
-var $persistentStore = isSurge ? $persistentStore : {};
-// 消息通知
-var $notify = isQuantumultX ? $notify : {};
-var $notification = isSurge ? $notification : {};
-// #endregion 固定头部
-
-// #region 网络请求专用转换
-if (isQuantumultX) {
-    var errorInfo = {
-        error: ''
-    };
-    $httpClient = {
-        get: (url, cb) => {
-            var urlObj;
-            if (typeof (url) == 'string') {
-                urlObj = {
-                    url: url
-                }
-            } else {
-                urlObj = url;
-            }
-            $task.fetch(urlObj).then(response => {
-                cb(undefined, response, response.body)
-            }, reason => {
-                errorInfo.error = reason.error;
-                cb(errorInfo, response, '')
-            })
-        },
-        post: (url, cb) => {
-            var urlObj;
-            if (typeof (url) == 'string') {
-                urlObj = {
-                    url: url
-                }
-            } else {
-                urlObj = url;
-            }
-            url.method = 'POST';
-            $task.fetch(urlObj).then(response => {
-                cb(undefined, response, response.body)
-            }, reason => {
-                errorInfo.error = reason.error;
-                cb(errorInfo, response, '')
-            })
-        }
-    }
-}
-if (isSurge) {
-    $task = {
-        fetch: url => {
-            //为了兼容qx中fetch的写法,所以永不reject
-            return new Promise((resolve, reject) => {
-                if (url.method == 'POST') {
-                    $httpClient.post(url, (error, response, data) => {
-                        if (response) {
-                            response.body = data;
-                            resolve(response, {
-                                error: error
-                            });
-                        } else {
-                            resolve(null, {
-                                error: error
-                            })
-                        }
-                    })
-                } else {
-                    $httpClient.get(url, (error, response, data) => {
-                        if (response) {
-                            response.body = data;
-                            resolve(response, {
-                                error: error
-                            });
-                        } else {
-                            resolve(null, {
-                                error: error
-                            })
-                        }
-                    })
-                }
-            })
-
-        }
-    }
-}
-// #endregion 网络请求专用转换
-
-// #region cookie操作
-if (isQuantumultX) {
-    $persistentStore = {
-        read: key => {
-            return $prefs.valueForKey(key);
-        },
-        write: (val, key) => {
-            return $prefs.setValueForKey(val, key);
-        }
-    }
-}
-if (isSurge) {
-    $prefs = {
-        valueForKey: key => {
-            return $persistentStore.read(key);
-        },
-        setValueForKey: (val, key) => {
-            return $persistentStore.write(val, key);
-        }
-    }
-}
-// #endregion
-
-// #region 消息通知
-if (isQuantumultX) {
-    $notification = {
-        post: (title, subTitle, detail) => {
-            $notify(title, subTitle, detail);
-        }
-    }
-}
-if (isSurge) {
-    $notify = function (title, subTitle, detail) {
-        $notification.post(title, subTitle, detail);
-    }
-}
-// #endregion
-// #endregion
 
 const provider = {
     heweather_now: {
@@ -212,7 +75,7 @@ const provider = {
         api: `https://free-api.heweather.net/s6/weather/lifestyle?location=${config.lat_lon.replace(/\s/g, "").replace("，", ",")}&key=${config.huweather_apiKey}`,
         progress: 0,
         timeoutNumber: 0,
-        data: {},
+        data: [],
         support: ['$[lifeStyle]']
     },
     darksky: {
@@ -493,8 +356,6 @@ function renderTemplate() {
         moonrise: `${provider.heweather_daily.data.mr}`,
         //月落时间
         moonset: `${provider.heweather_daily.data.ms}`,
-        //生活指数
-        lifeStyle: getLifeStyle()
     }
     var notifyInfo = {
         title: execTemplate(config.show.template.title, map),
@@ -682,22 +543,6 @@ function getUVDesc(daily_uvIndex) {
     }
     return uvDesc;
 }
-
-function getLifeStyle() {
-    var lifeStyle = '';
-    if (provider.heweather_lifestyle.data && provider.heweather_lifestyle.data.length > 0) {
-        for (var item in config.show.lifestyle) {
-            if (config.show.lifestyle[item]) {
-                var youAreTheOne = provider.heweather_lifestyle.data.filter(it => it.type == item);
-                if (youAreTheOne && youAreTheOne.length > 0) {
-                    // record("指数信息-choose-" + JSON.stringify(youAreTheOne));
-                    lifeStyle += `${lifeStyle==""?"":lineBreak}${config.show.icon?'💡':''}[${youAreTheOne[0].brf}]${youAreTheOne[0].txt}`;
-                }
-            }
-        }
-    }
-    return lifeStyle;
-}
 // #endregion
 
 // #region 模板相关
@@ -728,7 +573,8 @@ function support() {
     //     return provider.heweather_air.support.indexOf(item) != -1;
     // }).length > 0 ? 0 : 2;
     provider.heweather_lifestyle.progress = template.filter((item, filter) => {
-        return provider.heweather_lifestyle.support.indexOf(item) != -1;
+        let regexLifestyle = /\$\[(lifeStyle\()+([\s\S]+?)(\))+\]/g;
+        return regexLifestyle.test(config.show.lifestyle) ? 0 : 2;
     }).length > 0 ? 0 : 2;
     provider.aqicn.progress = template.filter((item, filter) => {
         return provider.aqicn.support.indexOf(item) != -1;
@@ -767,12 +613,109 @@ function execTemplate(template, map) {
 
 function execArrayTemplate() {
     try {
+        execTemplateLifestyle();
         execTemplateDaily();
         execTemplateHourly();
     } catch (e) {
         console.log(`${JSON.stringify(e)}`)
     }
 
+}
+
+function execTemplateLifestyle() {
+    let regexLifestyle = /\$\[(lifeStyle\()+([\s\S]+?)(\))+\]/g;
+    if (provider.heweather_lifestyle.data <= 0) {
+        config.show.template.detail.replace(regexLifestyle, '')
+    }
+    let result = [];
+    if (regexLifestyle.test(config.show.template.detail)) {
+        let lsMap = { //此处用于显示各项生活指数，可自行调整顺序，顺序越在前面则显示也会靠前，如果您不想查看某一指数，置为false即可，想看置为true即可
+            drsg: {
+                icon: '👔',
+                type: '穿衣指数'
+            },
+            flu: {
+                icon: '🤧',
+                type: '感冒指数'
+            },
+            comf: {
+                icon: '😊',
+                type: '舒适度指数'
+            },
+            cw: {
+                icon: '🚗',
+                type: '洗车指数'
+            },
+            sport: {
+                icon: '🏃🏻',
+                type: '运动指数'
+            },
+            trav: {
+                icon: '🌴',
+                type: '旅游指数'
+            },
+            uv: {
+                icon: '☂️',
+                type: '紫外线指数'
+            },
+            air: {
+                icon: '🌫',
+                type: '空气污染扩散条件指数'
+            },
+            ac: {
+                icon: '❄️',
+                type: '空调开启指数'
+            },
+            ag: {
+                icon: '😷',
+                type: '过敏指数'
+            },
+            gl: {
+                icon: '🕶',
+                type: '太阳镜指数'
+            },
+            mu: {
+                icon: '💄',
+                type: '化妆指数'
+            },
+            airc: {
+                icon: '🧺',
+                type: '晾晒指数'
+            },
+            ptfc: {
+                icon: '🚥',
+                type: '交通指数'
+            },
+            fsh: {
+                icon: '🎣',
+                type: '钓鱼指数'
+            },
+            spi: {
+                icon: '🔆',
+                type: '防晒指数'
+            },
+        }
+        config.show.template.detail.match(regexLifestyle);
+        var rangeTemplate = RegExp.$2; //此处拿到的是要替换的列表显示部分了
+        let regex = /\$\[([a-z,A-Z,0-9]*)\]/g;
+        var template = rangeTemplate.match(regex);
+        for (life of provider.heweather_lifestyle.data) {
+            if (!config.show.lifestyle[life.type]) continue;
+            var singleInfo = rangeTemplate;
+            for (item of template) {
+                item.match(regex);
+                if (RegExp.$1 == "icon") {
+                    singleInfo = singleInfo.replace(item, lsMap[life.type].icon)
+                } else if (RegExp.$1 == "type") {
+                    singleInfo = singleInfo.replace(item, lsMap[life.type].type)
+                } else {
+                    singleInfo = singleInfo.replace(item, life[RegExp.$1])
+                }
+            }
+            result.push(singleInfo);
+        }
+        config.show.template.detail = config.show.template.detail.replace(regexLifestyle, result.join(lineBreak));
+    }
 }
 
 function execTemplateDaily() {
