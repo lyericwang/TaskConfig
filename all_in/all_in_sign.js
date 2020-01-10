@@ -279,7 +279,7 @@ function sign_baidu_tieba() {
             }
             record(totalNotify);
 
-            process.notify = `[${config.baidu_tieba.name}] 总签到${process.result.length}个，成功${process.result.filter(it=>{return it.errorCode==-1||it.errorCode==0}).length}个,失败${process.result.filter(it=>{return it.errorCode>=1}).length}`
+            process.notify = `[${config.baidu_tieba.name}] 总签${process.result.length}个,成功${process.result.filter(it=>{return it.errorCode==-1||it.errorCode==0}).length}个,失败${process.result.filter(it=>{return it.errorCode>=1}).length}个`
             finalNotify("baidu_tieba");
         }
         let signBars = (bars, tbs, index) => {
@@ -336,7 +336,7 @@ function sign_baidu_tieba() {
         }
         let getList = () => {
             if (!cookieVal) {
-                process.notify = `[${config.baidu_tieba.name}]未获取到Cookie⚠️`;
+                process.notify = `[${config.baidu_tieba.name}] 未获取到Cookie⚠️`;
                 record(process.notify);
                 finalNotify("baidu_tieba");
             } else {
@@ -349,17 +349,17 @@ function sign_baidu_tieba() {
                         if (body.data.like_forum && body.data.like_forum.length > 0) {
                             signBars(body.data.like_forum, body.data.tbs, 0);
                         } else {
-                            process.notify = `[${config.baidu_tieba.name}]签到失败-请确认您有关注的贴吧⚠️`
+                            process.notify = `[${config.baidu_tieba.name}] 签到失败-请确认您有关注的贴吧⚠️`
                             record(process.notify);
                             finalNotify("baidu_tieba");
                         }
                     } else {
-                        process.notify = `[${config.baidu_tieba.name}]签到失败-${(body && body.error) ? body.error : "接口数据获取失败"}⚠️`;
+                        process.notify = `[${config.baidu_tieba.name}] 签到失败-${(body && body.error) ? body.error : "接口数据获取失败"}⚠️`;
                         record(process.notify);
                         finalNotify("baidu_tieba");
                     }
                 }, reason => {
-                    process.notify = `[${config.baidu_tieba.name}]签到失败-未获取到签到列表⚠️`;
+                    process.notify = `[${config.baidu_tieba.name}] 签到失败-未获取到签到列表⚠️`;
                     record(`${process.notify}-${reason.error}`);
                     finalNotify("baidu_tieba");
                 });
@@ -367,7 +367,7 @@ function sign_baidu_tieba() {
         }
         getList();
     } catch (e) {
-        progress.notify = `[${config.baidu_tieba.name}]脚本错误,详见日志`
+        progress.notify = `[${config.baidu_tieba.name}] 脚本错误,详见日志`
         finalNotify("baidu_tieba");
         console.log(`AIO-BaiduTieba-${JSON.stringify(e)}`)
     }
@@ -419,12 +419,12 @@ function sign_iqiyi() {
 
 function sign_netease_music() {
     if (!global.sign.netease_music) {
-        record(`[${config.netease_music.name}]未开启签到`);
+        record(`[${config.netease_music.name}] 未开启签到`);
         return;
     }
     let cookieVal = $prefs.valueForKey(config.netease_music.cookie);
     if (!cookieVal) {
-        config.netease_music.data.notify = `[${config.netease_music.name}]未获取到Cookie`;
+        config.netease_music.data.notify = `[${config.netease_music.name}] 未获取到Cookie`;
         record(config.netease_music.data.notify);
         finalNotify('netease_music');
         return;
@@ -447,16 +447,16 @@ function sign_netease_music() {
         try {
             if (result.code == 200) {
                 //success
-                config.netease_music.data[type] = '签到成功';
+                config.netease_music.data[type] = '签到成功🎉';
             } else if (result.code == -2) {
                 //signed
-                config.netease_music.data[type] = '重复签到';
+                config.netease_music.data[type] = '重复签到🎉';
             } else if (result.code == 301) {
                 //signed
-                config.netease_music.data[type] = 'Cookie失效';
+                config.netease_music.data[type] = 'Cookie失效⚠️';
             } else {
                 //failed
-                config.netease_music.data[type] = '未知错误';
+                config.netease_music.data[type] = '未知错误⚠️';
             }
             checkIsAllProcessed();
         } catch (e) {
@@ -467,7 +467,7 @@ function sign_netease_music() {
     let checkIsAllProcessed = () => {
         record(`网易云-check-${config.netease_music.data.pc}-${config.netease_music.data.app}`)
         if (config.netease_music.data.pc && config.netease_music.data.app) {
-            config.netease_music.data.notify = `[${config.netease_music.name}]APP-${config.netease_music.data.app} PC-${config.netease_music.data.pc}`;
+            config.netease_music.data.notify = `[${config.netease_music.name}] APP-${config.netease_music.data.app} PC-${config.netease_music.data.pc}`;
             finalNotify('netease_music');
         }
     }
@@ -487,7 +487,7 @@ function sign_52pojie() {
     }
     let cookieVal = $prefs.valueForKey(config._52pojie.cookie);
     if (!cookieVal) {
-        config._52pojie.data.notify = `[${config._52pojie.name}]未获取到Cookie⚠️`;
+        config._52pojie.data.notify = `[${config._52pojie.name}] 未获取到Cookie⚠️`;
         record(config._52pojie.data.notify);
         finalNotify("_52pojie");
         return;
@@ -496,21 +496,21 @@ function sign_52pojie() {
     $task.fetch(config._52pojie.provider).then(response => {
         if (response.body.match(/\u606d\u559c\u60a8/)) {
             //success
-            config._52pojie.data.notify = `[${config._52pojie.name}]签到成功🎉`;
+            config._52pojie.data.notify = `[${config._52pojie.name}] 签到成功🎉`;
         } else if (response.body.match(/\u4e0b\u671f\u518d\u6765/)) {
             //repeat
-            config._52pojie.data.notify = `[${config._52pojie.name}]重复签到🎉`;
+            config._52pojie.data.notify = `[${config._52pojie.name}] 重复签到🎉`;
         } else if (response.body.match(/\u9700\u8981\u5148\u767b\u5f55/)) {
             //cookie
-            config._52pojie.data.notify = `[${config._52pojie.name}]未获取到Cookie⚠️`;
+            config._52pojie.data.notify = `[${config._52pojie.name}] 未获取到Cookie⚠️`;
         } else {
             //script need update
-            config._52pojie.data.notify = `[${config._52pojie.name}]脚本需更新⚠️`;
+            config._52pojie.data.notify = `[${config._52pojie.name}] 脚本需更新⚠️`;
         }
         record(config._52pojie.data.notify);
         finalNotify("_52pojie");
     }, reason => {
-        config._52pojie.data.notify = `[${config._52pojie.name}]签到失败！网络请求异常⚠️`;
+        config._52pojie.data.notify = `[${config._52pojie.name}] 签到失败！网络请求异常⚠️`;
         finalNotify("_52pojie");
         record(`${config._52pojie.data.notify} : ${reason.error}`);
     });
@@ -522,12 +522,12 @@ function sign_52pojie() {
 
 function sign_v2ex() {
     if (!global.sign.v2ex) {
-        record(`[${config.v2ex.name}]未开启签到`);
+        record(`[${config.v2ex.name}] 未开启签到`);
         return;
     }
     let cookieVal = $prefs.valueForKey(config.v2ex.cookie);
     if (!cookieVal) {
-        config.v2ex.data.notify = `[${config.v2ex.name}]未获取到Cookie⚠️`;
+        config.v2ex.data.notify = `[${config.v2ex.name}] 未获取到Cookie⚠️`;
         record(config.v2ex.data.notify);
         finalNotify("v2ex");
         return;
@@ -537,7 +537,7 @@ function sign_v2ex() {
         $task.fetch(config.v2ex.provider.check).then(response => {
             let data = response.body;
             if (data.indexOf('每日登录奖励已领取') >= 0) {
-                config.v2ex.data.notify = `[${config.v2ex.name}]重复签到🎉`
+                config.v2ex.data.notify = `[${config.v2ex.name}] 重复签到🎉`
                 record(config.v2ex.data.notify);
                 finalNotify("v2ex");
             } else {
@@ -547,7 +547,7 @@ function sign_v2ex() {
                 }
             }
         }, reason => {
-            config.v2ex.data.notify = `[${config.v2ex.name}]签到失败！网络请求异常⚠️`;
+            config.v2ex.data.notify = `[${config.v2ex.name}] 签到失败！网络请求异常⚠️`;
             record(`${config.v2ex.data.notify}-${reason.error}`);
             finalNotify("v2ex");
         })
@@ -558,16 +558,16 @@ function sign_v2ex() {
         $task.fetch(config.v2ex.provider.sign).then(response => {
             let data = response.body;
             if (data.indexOf('每日登录奖励已领取') >= 0) {
-                config.v2ex.data.notify = `[${config.v2ex.name}]签到成功🎉`
+                config.v2ex.data.notify = `[${config.v2ex.name}] 签到成功🎉`
                 record(config.v2ex.data.notify);
                 finalNotify("v2ex");
             } else {
-                config.v2ex.data.notify = `[${config.v2ex.name}]签到失败⚠️`
+                config.v2ex.data.notify = `[${config.v2ex.name}] 签到失败⚠️`
                 record(`${config.v2ex.data.notify}-${data}`)
                 finalNotify("v2ex");
             }
         }, reason => {
-            config.v2ex.data.notify = `[${config.v2ex.name}]签到失败！网络请求异常⚠️⚠️`;
+            config.v2ex.data.notify = `[${config.v2ex.name}] 签到失败！网络请求异常⚠️⚠️`;
             record(`${config.v2ex.data.notify}-${reason.error}`);
             finalNotify("v2ex");
         })
