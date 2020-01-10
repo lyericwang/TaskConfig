@@ -4,12 +4,12 @@
 
 目前支持的Cookie获取
 
-- 百度贴吧
-- 爱奇艺VIP
-- 网易云音乐
-- 京东
-- V2EX
-- 吾爱破解
+- 百度贴吧(感谢...我自己)
+- 爱奇艺VIP(感谢[@NobyDa](https://github.com/NobyDa))
+- 网易云音乐(感谢[@chavyleung](https://github.com/chavyleung))
+- 京东(感谢[@NobyDa](https://github.com/NobyDa))
+- V2EX(感谢[@chavyleung](https://github.com/chavyleung))
+- 吾爱破解(感谢[@NobyDa](https://github.com/NobyDa))
 
 目前签到仅`京东`由于需要显示的内容较多,不纳入多合一中,其它的Cookie获取均支持
 
