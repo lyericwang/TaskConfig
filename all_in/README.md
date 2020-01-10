@@ -13,6 +13,8 @@
 
 目前签到仅`京东`由于需要显示的内容较多,不纳入多合一中,其它的Cookie获取均支持
 
+<img src="assets/签到示例图.png" alt="签到示例图" style="zoom:67%;" />
+
 ## Cookie配置
 
 > 这里面的cookie跟[@NobyDa](https://github.com/NobyDa/Script)中的Cookie是通用的
