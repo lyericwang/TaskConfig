@@ -213,7 +213,7 @@ let request = $request;
 var isValidRequest = request && request.headers && request.headers.Cookie
 if (isValidRequest) {
     let headers = request.headers;
-    console.log(`【Cookie触发】${headers.Host}`)
+    // console.log(`【Cookie触发】${headers.Host}`)
     //#region 百度贴吧-H5
     if (headers.Host == config.baidu_tieba_h5.Host) {
         var regex = /(^|)BDUSS=([^;]*)(;|$)/;

@@ -46,11 +46,24 @@ https?:\/\/c\.tieba\.baidu\.com\/c\/s\/login url script-response-body all_in_coo
 ^https?:\/\/music\.163\.com url script-response-body all_in_cookie.js
 # 此处用于爱奇艺cookie获取，加mitm后打开APP，点击“我的”，待弹出获取成功即可
 https:\/\/passport\.iqiyi\.com\/apis\/user\/info\.action.*authcookie url script-response-body all_in_cookie.js
-# 此处用于52破解cookie获取
+# 此处用于52破解cookie获取,浏览器访问https://www.52pojie.cn/home.php?mod=space 即可
 https:\/\/www\.52pojie\.cn\/home\.php\?mod=space url script-response-body all_in_cookie.js
 # 此处用于V2EX cookie获取，浏览器打开https://www.v2ex.com/mission/daily ，待弹出获取成功即可
 ^https:\/\/www\.v2ex\.com\/mission\/daily url script-response-body all_in_cookie.js
 ```
+
+### 触发
+
+|   名称   |  方式  |                   说明                    |
+| :------: | :----: | :---------------------------------------: |
+| 百度贴吧 | 浏览器 |    https://tieba.baidu.com/index.html     |
+| 百度贴吧 |  APP   |          进入APP,点击"我的"即可           |
+|  网易云  | 浏览器 |       https://music.163.com/m/login       |
+|  爱奇艺  |  APP   |          进入APP,点击"我的"即可           |
+| 吾爱破解 | 浏览器 | https://www.52pojie.cn/home.php?mod=space |
+|   V2EX   | 浏览器 |    https://www.v2ex.com/mission/daily     |
+
+
 
 ## 签到脚本
 
