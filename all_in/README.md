@@ -1,6 +1,8 @@
 # 多合一Cookie获取+签到
 
 > Cookie脚本会自动检测Cookie是否需要更新，因此您无需手动禁用脚本，一直放着就行
+>
+> 不太会写说明,见谅...
 
 目前支持的Cookie获取
 
@@ -15,9 +17,15 @@
 
 <img src="assets/签到示例图.png" alt="签到示例图" style="zoom:67%;" />
 
+**Cookie获取脚本:https://github.com/sazs34/TaskConfig/blob/master/all_in/all_in_cookie.js**
+
+**签到脚本:https://github.com/sazs34/TaskConfig/blob/master/all_in/all_in_sign.js**
+
 ## Cookie配置
 
 > 这里面的cookie跟[@NobyDa](https://github.com/NobyDa/Script)中的Cookie是通用的
+
+
 
 ### MITM
 
