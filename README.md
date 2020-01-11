@@ -29,7 +29,7 @@
 我是surge的脚本
 ```
 
-把[smart.js](./smart.js)拷贝打开，拷贝到weather.js的最前面即可
+把[smart.js](./smart.js)文件打开，将里面的文本内容拷贝到weather.js的最前面保存后即可使用
 
 ```
 //这里是smart.js的内容
