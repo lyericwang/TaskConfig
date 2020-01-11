@@ -17,9 +17,10 @@
 
 将[smart.js](./smart.js)中的内容拷贝到你想使用的脚本**最前面**,就可以了呢
 
+
 ### 示例
 
-你原本的脚本是这样的
+你原本的脚本，比如叫weather.js，打开后里面的内容是这样的
 
 ```javascript
 //这里是原来的脚本
@@ -28,7 +29,7 @@
 我是surge的脚本
 ```
 
-把[smart.js](./smart.js)拷贝进去
+把[smart.js](./smart.js)拷贝打开，拷贝到weather.js的最前面即可
 
 ```
 //这里是smart.js的内容
