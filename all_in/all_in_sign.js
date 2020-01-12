@@ -1,18 +1,18 @@
 const global = {
-    log: 1, //日志模式:0不显示 1全部显示 2精简显示
+    log: 1, //日志模式:0不显示 1全部显示 2精简显示,推荐值:1
     sign: { //用于设置哪些需要进行签到,哪些不处理
         baidu_tieba: true,
         iqiyi: true,
         _52pojie: true,
         netease_music: true,
         v2ex: true,
-        weibo_super: false
+        weibo_super: true
     },
     data: {
         weibo_super: [
             ["周杰伦", "1008087a8941058aaf4df5147042ce104568da"],
-            ["IU", "100808d4151ccebfbae55e8f7c0f68f6d18e4d"],
-            ["SWITCH", "1008084239f063a3d4fb9d38a0182be6e39e76"],
+            // ["IU", "100808d4151ccebfbae55e8f7c0f68f6d18e4d"],
+            // ["SWITCH", "1008084239f063a3d4fb9d38a0182be6e39e76"],
         ]
     }
 }
@@ -638,7 +638,7 @@ function sign_weibo_super() {
             success: true,
             icon: '🎉'
         };
-        $task.fetch(super_url).then(response => {
+        $task.fetch(config.weibo_super.provider).then(response => {
             var obj = JSON.parse(response.body);
             var code = obj.code;
             var msg = obj.msg;
@@ -662,7 +662,7 @@ function sign_weibo_super() {
             sign(++index);
         }, reason => {
             result.success = false;
-            result.icon = '❕';
+            result.icon = '❌';
             config.weibo_super.data.result.push(result);
             record(`[${config.weibo_super.name}] ${name} 签到错误,${reason.error}`);
             sign(++index);

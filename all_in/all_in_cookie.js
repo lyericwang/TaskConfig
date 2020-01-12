@@ -34,6 +34,11 @@ const config = {
         cookie: 'CookieJD',
         name: '京东Cookie',
         Host: 'api.m.jd.com'
+    },
+    weibo_super: {
+        cookie: 'super_cookie',
+        name: '微博超话',
+        Host: 'weibo.com'
     }
 }
 //#endregion
@@ -270,7 +275,7 @@ if (isValidRequest) {
     }
     //#endregion
     //#region 微博超话
-    if (headers.Host == config.weibo_super.Host) {
+    if (headers.Host.indexOf(config.weibo_super.Host) >= 0) {
         var headerCookie = headers.Cookie;
         updateCookie(config.weibo_super, headerCookie);
     }

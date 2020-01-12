@@ -12,6 +12,7 @@
 - 京东(感谢[@NobyDa](https://github.com/NobyDa))
 - V2EX(感谢[@chavyleung](https://github.com/chavyleung))
 - 吾爱破解(感谢[@NobyDa](https://github.com/NobyDa))
+- 微博超话(感谢[@NavePnow](https://github.com/NavePnow/Profiles)) - 此脚本cookie同NavePnow原版相同,请放心食用
 
 目前签到仅`京东`由于需要显示的内容较多,不纳入多合一中,其它的Cookie获取均支持
 
@@ -36,7 +37,7 @@
 ```
 [mitm]
 # cookie获取专用,仅获取cookie时使用
-hostname = tieba.baidu.com, c.tieba.baidu.com, music.163.com, passport.iqiyi.com, www.52pojie.cn, *.v2ex.com
+hostname = tieba.baidu.com, c.tieba.baidu.com, music.163.com, passport.iqiyi.com, www.52pojie.cn, *.v2ex.com, weibo.com
 ```
 ### REWRITE
 
@@ -58,18 +59,24 @@ https:\/\/passport\.iqiyi\.com\/apis\/user\/info\.action.*authcookie url script-
 https:\/\/www\.52pojie\.cn\/home\.php\?mod=space url script-request-header all_in_cookie.js
 # 此处用于V2EX cookie获取，浏览器打开https://www.v2ex.com/mission/daily ，待弹出获取成功即可
 ^https:\/\/www\.v2ex\.com\/mission\/daily url script-request-header all_in_cookie.js
+# 此处用于微博超话 cookie获取,打开超话页,点击'签到'或'已签到',用完后可以注释掉
+;https:\/\/weibo\.com\/p\/aj\/general\/button\?ajwvr=6&api=http:\/\/i\.huati\.weibo\.com\/aj\/super\/checkin url script-request-header all_in_cookie.js
+# 此处用于强制手机浏览器访问电脑端超话页面,用完后可以注释掉
+;^https?://weibo\.com/p/[0-9] url request-header (\r\n)User-Agent:.+(\r\n) request-header $1User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.2 Safari/605.1.15
+
 ```
 
 ### 触发
 
-|   名称   |  方式  |                   说明                    |
-| :------: | :----: | :---------------------------------------: |
-| 百度贴吧 | 浏览器 |    https://tieba.baidu.com/index.html     |
-| 百度贴吧 |  APP   |          进入APP,点击"我的"即可           |
-|  网易云  | 浏览器 |       https://music.163.com/m/login       |
-|  爱奇艺  |  APP   |          进入APP,点击"我的"即可           |
-| 吾爱破解 | 浏览器 | https://www.52pojie.cn/home.php?mod=space |
-|   V2EX   | 浏览器 |    https://www.v2ex.com/mission/daily     |
+|   名称   |  方式  |                            说明                            |
+| :------: | :----: | :--------------------------------------------------------: |
+| 百度贴吧 | 浏览器 |             https://tieba.baidu.com/index.html             |
+| 百度贴吧 |  APP   |                   进入APP,点击"我的"即可                   |
+|  网易云  | 浏览器 |               https://music.163.com/m/login                |
+|  爱奇艺  |  APP   |                   进入APP,点击"我的"即可                   |
+| 吾爱破解 | 浏览器 |         https://www.52pojie.cn/home.php?mod=space          |
+|   V2EX   | 浏览器 |             https://www.v2ex.com/mission/daily             |
+| 微博超话 | 浏览器 | https://weibo.com/p/1008080c5fb650788fe5c7577f0b6ec4a34038 |
 
 
 
