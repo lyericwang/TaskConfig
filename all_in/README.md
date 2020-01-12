@@ -68,17 +68,17 @@ https:\/\/www\.52pojie\.cn\/home\.php\?mod=space url script-request-header all_i
 
 ### 触发
 
-|   名称   |  方式  |                            说明                            |
-| :------: | :----: | :--------------------------------------------------------: |
-| 百度贴吧 | 浏览器 |             https://tieba.baidu.com/index.html             |
-| 百度贴吧 |  APP   |                   进入APP,点击"我的"即可                   |
-|  网易云  | 浏览器 |               https://music.163.com/m/login                |
-|  爱奇艺  |  APP   |                   进入APP,点击"我的"即可                   |
-| 吾爱破解 | 浏览器 |         https://www.52pojie.cn/home.php?mod=space          |
-|   V2EX   | 浏览器 |             https://www.v2ex.com/mission/daily             |
-| 微博超话 | 浏览器 | https://weibo.com/p/1008080c5fb650788fe5c7577f0b6ec4a34038 |
+|                             名称                             |  方式  |                            说明                            |
+| :----------------------------------------------------------: | :----: | :--------------------------------------------------------: |
+|                           百度贴吧                           | 浏览器 |             https://tieba.baidu.com/index.html             |
+|                           百度贴吧                           |  APP   |                   进入APP,点击"我的"即可                   |
+|                            网易云                            | 浏览器 |               https://music.163.com/m/login                |
+|                            爱奇艺                            |  APP   |                   进入APP,点击"我的"即可                   |
+|                           吾爱破解                           | 浏览器 |         https://www.52pojie.cn/home.php?mod=space          |
+|                             V2EX                             | 浏览器 |             https://www.v2ex.com/mission/daily             |
+| [微博超话](https://nave.work/%E5%BE%AE%E5%8D%9A%E8%B6%85%E8%AF%9D%E8%87%AA%E5%8A%A8%E7%AD%BE%E5%88%B0%E8%84%9A%E6%9C%AC.html) | 浏览器 | https://weibo.com/p/1008080c5fb650788fe5c7577f0b6ec4a34038 |
 
-
+微博超话点击即可跳转到对应的详细说明网站上
 
 ## 签到脚本
 
@@ -100,7 +100,16 @@ const global = {
         iqiyi: true,
         _52pojie: true,
         netease_music: true,
-        v2ex: true
+        v2ex: true,
+        weibo_super: true
+    },
+    data: {
+        //此处用于放置微博超话的信息
+        weibo_super: [
+            ["周杰伦", "1008087a8941058aaf4df5147042ce104568da"],
+            ["IU", "100808d4151ccebfbae55e8f7c0f68f6d18e4d"],
+            ["SWITCH", "1008084239f063a3d4fb9d38a0182be6e39e76"],
+        ]
     }
 }
 ```
