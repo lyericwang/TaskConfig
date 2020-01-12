@@ -269,6 +269,12 @@ if (isValidRequest) {
         updateCookie(config.jd, headerCookie);
     }
     //#endregion
+    //#region 微博超话
+    if (headers.Host == config.weibo_super.Host) {
+        var headerCookie = headers.Cookie;
+        updateCookie(config.weibo_super, headerCookie);
+    }
+    //#endregion
 }
 //#endregion
 
