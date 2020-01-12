@@ -45,19 +45,19 @@ hostname = tieba.baidu.com, c.tieba.baidu.com, music.163.com, passport.iqiyi.com
 ```
 [rewrite_local]
 # 此处用于京东cookie获取，当失效时需要手动登录京东网页版https://bean.m.jd.com/ 签到获取Cookie, 待QX弹出获取成功即可
-https:\/\/api\.m\.jd\.com\/client\.action.*functionId=signBeanIndex url script-response-body all_in_cookie.js
+https:\/\/api\.m\.jd\.com\/client\.action.*functionId=signBeanIndex url script-request-header all_in_cookie.js
 # 此处用于百度贴吧cookie获取，当失效时需手动登录https://tieba.baidu.com/index.html贴吧获取cookie，待弹出获取成功即可
-^https?:\/\/tieba.baidu\.com url script-response-body all_in_cookie.js
+^https?:\/\/tieba.baidu\.com url script-request-header all_in_cookie.js
 # APP端直接进去，点击"我的"即可
-https?:\/\/c\.tieba\.baidu\.com\/c\/s\/login url script-response-body all_in_cookie.js
+https?:\/\/c\.tieba\.baidu\.com\/c\/s\/login url script-request-header all_in_cookie.js
 # 此处用于网易云音乐cookie获取，当失效时需浏览器访问并登录:https://music.163.com/m/login 获取cookie，待弹出获取成功即可
-^https?:\/\/music\.163\.com url script-response-body all_in_cookie.js
+^https?:\/\/music\.163\.com url script-request-header all_in_cookie.js
 # 此处用于爱奇艺cookie获取，加mitm后打开APP，点击“我的”，待弹出获取成功即可
-https:\/\/passport\.iqiyi\.com\/apis\/user\/info\.action.*authcookie url script-response-body all_in_cookie.js
+https:\/\/passport\.iqiyi\.com\/apis\/user\/info\.action.*authcookie url script-request-header all_in_cookie.js
 # 此处用于52破解cookie获取,浏览器访问https://www.52pojie.cn/home.php?mod=space 即可
-https:\/\/www\.52pojie\.cn\/home\.php\?mod=space url script-response-body all_in_cookie.js
+https:\/\/www\.52pojie\.cn\/home\.php\?mod=space url script-request-header all_in_cookie.js
 # 此处用于V2EX cookie获取，浏览器打开https://www.v2ex.com/mission/daily ，待弹出获取成功即可
-^https:\/\/www\.v2ex\.com\/mission\/daily url script-response-body all_in_cookie.js
+^https:\/\/www\.v2ex\.com\/mission\/daily url script-request-header all_in_cookie.js
 ```
 
 ### 触发
