@@ -721,9 +721,8 @@ function sign_china_telecom() {
         return;
     }
     config.china_telecom.provider.headers.Cookie = cookieVal;
-    $task.fetch(url).then(response => {
+    $task.fetch(config.china_telecom.provider).then(response => {
         var body = JSON.parse(response.body);
-        console.log(response.body);
         if (body.resoultCode == "0") {
             if (body.data.code == 1) {
                 config.china_telecom.data.notify = `[${config.china_telecom.name}] 签到成功,获得金币${body.data.coin}/金豆${body.data.flow}`
@@ -731,7 +730,6 @@ function sign_china_telecom() {
                 config.china_telecom.data.notify = `[${config.china_telecom.name}] 签到成功,${body.data.msg}`
             } else {
                 config.china_telecom.data.notify = `[${config.china_telecom.name}] ${body.data.msg}`
-                $notify("电信营业厅", "", body.data.msg);
             }
         } else {
             config.china_telecom.data.notify = `[${config.china_telecom.name}] 签到失败, ${body.data.msg}-${body.resoultCode}`
@@ -739,8 +737,9 @@ function sign_china_telecom() {
         record(config.china_telecom.data.notify)
         finalNotify("china_telecom");
     }, reason => {
+        config.china_telecom.data.notify=`[${config.china_telecom.name}] 签到失败,${reason.error}`
+        record(config.china_telecom.data.notify)
         finalNotify("china_telecom");
-        $notify("电信营业厅", "签到失败", `${reason.error}`);
     })
 }
 //#endregion
