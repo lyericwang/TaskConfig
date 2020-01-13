@@ -139,6 +139,7 @@ const config = {
         name: '中国电信',
         provider: {
             url: 'https://wapside.189.cn:9001/api/home/sign',
+            method: 'POST',
             headers: {
                 "Content-Type": `application/json;charset=utf-8`,
                 "User-Agent": `Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;CtClient;7.6.0;iOS;13.3;iPhone XR`,
@@ -737,7 +738,7 @@ function sign_china_telecom() {
         record(config.china_telecom.data.notify)
         finalNotify("china_telecom");
     }, reason => {
-        config.china_telecom.data.notify=`[${config.china_telecom.name}] 签到失败,${reason.error}`
+        config.china_telecom.data.notify = `[${config.china_telecom.name}] 签到失败,${reason.error}`
         record(config.china_telecom.data.notify)
         finalNotify("china_telecom");
     })
