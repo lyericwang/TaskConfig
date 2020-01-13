@@ -98,22 +98,23 @@ https:\/\/www\.52pojie\.cn\/home\.php\?mod=space url script-request-header all_i
 ```javascript
 //因为有的人只有其中一个或两个需要进行签到,所以进行了配置化,可以指定签到
 const global = {
-    log: 1, //日志模式:0不显示 1全部显示 2精简显示
+    log: 1, //日志模式:0不显示 1全部显示 2精简显示,推荐值:1
     sign: { //用于设置哪些需要进行签到,哪些不处理
         baidu_tieba: true,
         iqiyi: true,
         _52pojie: true,
         netease_music: true,
         v2ex: true,
-        weibo_super: true
+        weibo_super: true,
+        china_telecom: true
     },
     data: {
-        //此处用于放置微博超话的信息
         weibo_super: [
             ["周杰伦", "1008087a8941058aaf4df5147042ce104568da"],
-            ["IU", "100808d4151ccebfbae55e8f7c0f68f6d18e4d"],
-            ["SWITCH", "1008084239f063a3d4fb9d38a0182be6e39e76"],
-        ]
+            // ["IU", "100808d4151ccebfbae55e8f7c0f68f6d18e4d"],
+            // ["SWITCH", "1008084239f063a3d4fb9d38a0182be6e39e76"],
+        ],
+        china_telecom: '' //此处输入要签到的手机号码
     }
 }
 ```
