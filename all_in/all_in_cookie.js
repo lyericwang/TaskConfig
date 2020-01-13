@@ -286,7 +286,7 @@ if (isValidRequest) {
     }
     //#endregion
     //#region 中国电信
-    if (headers.Host.indexOf(config.china_telecom) >= 0) {
+    if (headers.Host.indexOf(config.china_telecom.Host) >= 0) {
     var headerCookie = headers.Cookie;
         updateCookie(config.china_telecom, headerCookie);
     }
