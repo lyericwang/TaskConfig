@@ -124,7 +124,8 @@ const global = {
             // ["IU", "100808d4151ccebfbae55e8f7c0f68f6d18e4d"],
             // ["SWITCH", "1008084239f063a3d4fb9d38a0182be6e39e76"],
         ],
-        china_telecom: '' //此处输入要签到的手机号码
+        //此处输入要签到的手机号码
+        china_telecom: '18851889188'//替换手机号部分即可
     }
 }
 ```
