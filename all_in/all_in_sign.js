@@ -694,7 +694,7 @@ function sign_weibo_super() {
     let combain = () => {
         config.weibo_super.data.notify = `[${config.weibo_super.name}]`;
         for (item of config.weibo_super.data.result) {
-            config.weibo_super.data.notify += ` 「${item.name}」-${item.icon}`;
+            config.weibo_super.data.notify += ` 「${item.name}」${item.icon}`;
         }
     }
     sign(0);

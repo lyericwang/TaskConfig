@@ -23,6 +23,10 @@
 
 **签到脚本:https://github.com/sazs34/TaskConfig/blob/master/all_in/all_in_sign.js**
 
+## 更新记录
+
+> 2020-1-13 新增中国电信营业厅APP签到,需要增加MITM REWRITE_LOCAL以及脚本配置中添加Cookie对应的手机号
+
 ## Cookie配置
 
 > 这里面的cookie跟[@NobyDa](https://github.com/NobyDa/Script)中的Cookie是通用的
