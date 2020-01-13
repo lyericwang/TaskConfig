@@ -7,6 +7,7 @@
 目前支持的Cookie获取
 
 - 百度贴吧(感谢...我自己)
+- 电信营业厅(感谢...我自己)
 - 爱奇艺VIP(感谢[@NobyDa](https://github.com/NobyDa))
 - 网易云音乐(感谢[@chavyleung](https://github.com/chavyleung))
 - 京东(感谢[@NobyDa](https://github.com/NobyDa))
@@ -37,7 +38,7 @@
 ```
 [mitm]
 # cookie获取专用,仅获取cookie时使用
-hostname = tieba.baidu.com, c.tieba.baidu.com, music.163.com, passport.iqiyi.com, www.52pojie.cn, *.v2ex.com, weibo.com
+hostname = tieba.baidu.com, c.tieba.baidu.com, music.163.com, passport.iqiyi.com, www.52pojie.cn, *.v2ex.com, weibo.com, wapside.189.cn
 ```
 ### REWRITE
 
@@ -49,6 +50,8 @@ hostname = tieba.baidu.com, c.tieba.baidu.com, music.163.com, passport.iqiyi.com
 https:\/\/api\.m\.jd\.com\/client\.action.*functionId=signBeanIndex url script-request-header all_in_cookie.js
 # 此处用于百度贴吧cookie获取，当失效时需手动登录https://tieba.baidu.com/index.html贴吧获取cookie，待弹出获取成功即可
 ^https?:\/\/tieba.baidu\.com url script-request-header all_in_cookie.js
+# 此处用于电信营业厅APP cookie获取
+https:\/\/wapside\.189\.cn:9001\/api\/home\/sign url script-request-header all_in_cookie.js
 # APP端直接进去，点击"我的"即可
 https?:\/\/c\.tieba\.baidu\.com\/c\/s\/login url script-request-header all_in_cookie.js
 # 此处用于网易云音乐cookie获取，当失效时需浏览器访问并登录:https://music.163.com/m/login 获取cookie，待弹出获取成功即可
@@ -72,6 +75,7 @@ https:\/\/www\.52pojie\.cn\/home\.php\?mod=space url script-request-header all_i
 | :----------------------------------------------------------: | :----: | :--------------------------------------------------------: |
 |                           百度贴吧                           | 浏览器 |             https://tieba.baidu.com/index.html             |
 |                           百度贴吧                           |  APP   |                   进入APP,点击"我的"即可                   |
+|                          电信营业厅                          |  APP   |               进入APP,点击"我",签到即可获取                |
 |                            网易云                            | 浏览器 |               https://music.163.com/m/login                |
 |                            爱奇艺                            |  APP   |                   进入APP,点击"我的"即可                   |
 |                           吾爱破解                           | 浏览器 |         https://www.52pojie.cn/home.php?mod=space          |
