@@ -248,7 +248,7 @@ let getCookie = () => {
     var isValidRequest = request && request.headers && request.headers.Cookie
     if (isValidRequest) {
         let headers = request.headers;
-        console.log(`【Cookie触发】${headers.Host}-${headers.Cookie}`)
+        // console.log(`【Cookie触发】${headers.Host}-${headers.Cookie}`)
         //#region 百度贴吧-H5
         if (headers.Host == config.baidu_tieba_h5.Host) {
             var regex = /(^|)BDUSS=([^;]*)(;|$)/;
