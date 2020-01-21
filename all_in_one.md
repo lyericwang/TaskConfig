@@ -6,7 +6,7 @@
 >
 > 原有的all_in_cookie和all_in_sign合并了起来,并且删除掉他们,请各位老客重新配置一下
 
-<img src="assets/image-20200116103533642.png" alt="image-20200116103533642" style="zoom:50%;" />
+<img src="assets/all_in_one.jpg" style="zoom:60%;" />
 
 **支持列表**
 
