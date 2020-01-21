@@ -4,4 +4,4 @@
 
 具体内容见
 
-https://github.com/sazs34/TaskConfig/blob/master/README.md#多合一签到脚本
+[https://github.com/sazs34/TaskConfig/blob/master/all_in_one.md#](../all_in_one.md)多合一签到脚本

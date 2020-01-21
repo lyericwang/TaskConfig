@@ -10,15 +10,15 @@
 
 **支持列表**
 
-|    名称    | Cookie |                             签到                             |                       感谢                        |     说明     |
-| :--------: | :----: | :----------------------------------------------------------: | :-----------------------------------------------: | :----------: |
-|  百度贴吧  |   ✅    |                              ✅                               |                      我自己                       |              |
-| 电信营业厅 |   ✅    |                              ✅                               |                      我自己                       |              |
-| 网易云音乐 |   ✅    |                              ✅                               |   [@chavyleung](https://github.com/chavyleung)    |              |
-|    京东    |   ✅    | [获取](https://github.com/NobyDa/Script/blob/master/JD-DailyBonus/JD_DailyBonus.js) |       [@NobyDa](https://github.com/NobyDa)        | cookie同原版 |
-|  吾爱破解  |   ✅    |                              ✅                               |       [@NobyDa](https://github.com/NobyDa)        | cookie同原版 |
-|  微博超话  |   ✅    |                              ✅                               | [@NavePnow](https://github.com/NavePnow/Profiles) | cookie同原版 |
-| 爱奇艺VIP  |   ✅    |                              ✅                               |       [@NobyDa](https://github.com/NobyDa)        | cookie同原版 |
+|    名称    | Cookie |                             签到                             |                       感谢                        |        说明         |
+| :--------: | :----: | :----------------------------------------------------------: | :-----------------------------------------------: | :-----------------: |
+|  百度贴吧  |   ✅    |                              ✅                               |                      我自己                       |                     |
+| 电信营业厅 |   ✅    |                              ✅                               |                      我自己                       |                     |
+| 网易云音乐 |   ✅    |                              ✅                               |   [@chavyleung](https://github.com/chavyleung)    |                     |
+|    京东    |   ✅    | [获取](https://github.com/NobyDa/Script/blob/master/JD-DailyBonus/JD_DailyBonus.js) |       [@NobyDa](https://github.com/NobyDa)        |    cookie同原版     |
+|  吾爱破解  |   ✅    |                              ✅                               |       [@NobyDa](https://github.com/NobyDa)        |    cookie同原版     |
+|  微博超话  |   ✅    |                              ✅                               | [@NavePnow](https://github.com/NavePnow/Profiles) | 移除支持,请使用原版 |
+| 爱奇艺VIP  |   ✅    |                              ✅                               |       [@NobyDa](https://github.com/NobyDa)        |    cookie同原版     |
 
 脚本地址:
 
@@ -42,11 +42,6 @@ const global = {
         china_telecom: true
     },
     data: {
-        weibo_super: [
-            ["周杰伦", "1008087a8941058aaf4df5147042ce104568da"],
-            // ["IU", "100808d4151ccebfbae55e8f7c0f68f6d18e4d"],
-            // ["SWITCH", "1008084239f063a3d4fb9d38a0182be6e39e76"],
-        ],
         //此处输入要签到的手机号码
         china_telecom: '18851889188'//替换手机号部分即可
     }
@@ -102,10 +97,7 @@ https:\/\/passport\.iqiyi\.com\/apis\/user\/info\.action.*authcookie url script-
 https:\/\/www\.52pojie\.cn\/home\.php\?mod=space url script-request-header all_in_one.js
 # 此处用于V2EX cookie获取，浏览器打开https://www.v2ex.com/mission/daily ，待弹出获取成功即可
 ^https:\/\/www\.v2ex\.com\/mission\/daily url script-request-header all_in_one.js
-# 此处用于微博超话 cookie获取,打开超话页,点击'签到'或'已签到',用完后可以注释掉
-;https:\/\/weibo\.com\/p\/aj\/general\/button\?ajwvr=6&api=http:\/\/i\.huati\.weibo\.com\/aj\/super\/checkin url script-request-header all_in_one.js
-# 此处用于强制手机浏览器访问电脑端超话页面,用完后可以注释掉
-;^https?://weibo\.com/p/[0-9] url request-header (\r\n)User-Agent:.+(\r\n) request-header $1User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.2 Safari/605.1.15
+
 
 ```
 
