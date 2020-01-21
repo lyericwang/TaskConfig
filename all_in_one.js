@@ -6,7 +6,8 @@ const global = {
         _52pojie: true,
         netease_music: true,
         v2ex: true,
-        china_telecom: true
+        china_telecom: true,
+        eleme: true
     },
     data: {
         china_telecom: "" //此处输入要签到的手机号码,半角双引号中间
@@ -156,15 +157,16 @@ if (isSurge) {
 
 //#endregion
 
-if (typeof $request != "undefined") {
-    getCookie();
-    $done({});
-} else {
-    execute();
-    $done({});
+let master = () => {
+    if (typeof $request != "undefined") {
+        getCookie();
+    } else {
+        execute();
+        $done({});
+    }
 }
 
-function getCookie() {
+let getCookie = () => {
     //#region 基础配置
     const config = {
         baidu_tieba_h5: {
@@ -206,6 +208,11 @@ function getCookie() {
             cookie: 'cookie.10000',
             name: '电信营业厅',
             Host: 'wapside.189.cn'
+        },
+        eleme: {
+            cookie: "CookieELM",
+            name: '饿了么Cookie',
+            Host: 'ele.me'
         }
     }
     //#endregion
@@ -241,7 +248,7 @@ function getCookie() {
     var isValidRequest = request && request.headers && request.headers.Cookie
     if (isValidRequest) {
         let headers = request.headers;
-        // console.log(`【Cookie触发】${headers.Host}`)
+        console.log(`【Cookie触发】${headers.Host}-${headers.Cookie}`)
         //#region 百度贴吧-H5
         if (headers.Host == config.baidu_tieba_h5.Host) {
             var regex = /(^|)BDUSS=([^;]*)(;|$)/;
@@ -303,12 +310,19 @@ function getCookie() {
             updateCookie(config.china_telecom, headerCookie);
         }
         //#endregion
+        //#region 饿了么
+        if (headers.Host.indexOf(config.eleme.Host) >= 0) {
+            var headerCookie = headers.Cookie;
+            var cookieVal = helper.getCookieByName(headerCookie, "USERID");
+            updateCookie(config.eleme, cookieVal);
+        }
+        //#endregion
     }
     //#endregion
 
 }
 
-function execute() {
+let execute = () => {
     //#region 签到配置,请勿修改
     const config = {
         baidu_tieba: {
@@ -428,6 +442,23 @@ function execute() {
                 body: JSON.stringify({
                     phone: global.data.china_telecom
                 })
+            },
+            data: {
+                notify: ''
+            }
+        },
+        eleme: {
+            cookie: 'CookieELM',
+            name: '饿了么',
+            provider: {
+                sign: {
+                    url: `https://h5.ele.me/restapi/member/v2/users/`,
+                    method: 'POST',
+                },
+                check: {
+                    url: `https://h5.ele.me/restapi/member/v1/users/`,
+                    method: 'GET',
+                }
             },
             data: {
                 notify: ''
@@ -809,6 +840,56 @@ function execute() {
     }
     //#endregion
 
+    //#region 饿了么
+
+    let sign_eleme = () => {
+        if (!global.sign.eleme) {
+            record(`[${config.eleme.name}] 未开启签到`);
+            return;
+        }
+        let cookieVal = $prefs.valueForKey(config.eleme.cookie);
+        if (!cookieVal) {
+            config.eleme.data.notify = `[${config.eleme.name}] 未获取到Cookie⚠️`;
+            record(config.eleme.data.notify);
+            finalNotify("eleme");
+            return;
+        }
+        var eleUserId = cookieVal;
+        config.eleme.provider.sign.url += `${eleUserId}/sign_in`;
+        $task.fetch(config.eleme.provider.sign).then(response => {
+            if (response.statusCode == 200) {
+                config.eleme.data.notify = `[${config.eleme.name}] 签到成功🎉`;
+                record(config.eleme.data.notify);
+                finalNotify("eleme");
+            } else {
+                config.eleme.provider.check.url += `${eleUserId}/sign_in/info`;
+                $task.fetch(config.eleme.provider.check).then(resp => {
+                    let result = JSON.parse(resp.body);
+                    record(`${config.eleme.provider.check.url}---${JSON.stringify(resp.body)}`);
+                    if (result.has_signed_in_today) {
+                        config.eleme.data.notify = `[${config.eleme.name}] 今日已签到🎉`;
+                        finalNotify("eleme");
+                        record(config.eleme.data.notify);
+                    } else {
+                        config.eleme.data.notify = `[${config.eleme.name}] 签到失败`;
+                        finalNotify("eleme");
+                        record(config.eleme.data.notify);
+                    }
+                }, err => {
+                    config.eleme.data.notify = `[${config.eleme.name}] 网络请求异常⚠️`;
+                    finalNotify("eleme");
+                    record(`${config.eleme.data.notify} : ${err.error}`);
+                })
+            }
+        }, reason => {
+            config.eleme.data.notify = `[${config.eleme.name}] 签到失败！网络请求异常⚠️`;
+            finalNotify("eleme");
+            record(`${config.eleme.data.notify} : ${reason.error}`);
+        })
+    }
+
+    //#endregion
+
     //#endregion
 
     //#region 签到统一管控
@@ -819,6 +900,7 @@ function execute() {
         if (global.sign._52pojie) sign_52pojie();
         if (global.sign.v2ex) sign_v2ex();
         if (global.sign.china_telecom) sign_china_telecom();
+        if (global.sign.eleme) sign_eleme();
     }
 
     let finalNotify = type => {
@@ -860,3 +942,16 @@ ${content.splice(0, 60)}`);
 
     startSign();
 }
+
+let helper = {
+    getCookieByName: (cookie, name) => {
+        var reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        var arr = cookie.match(reg);
+        if (arr && arr.length >= 3)
+            return arr[2];
+        else
+            return null;
+    }
+}
+
+master();
