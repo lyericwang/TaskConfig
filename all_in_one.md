@@ -98,7 +98,7 @@ https:\/\/www\.52pojie\.cn\/home\.php\?mod=space url script-request-header all_i
 # 此处用于V2EX cookie获取，浏览器打开https://www.v2ex.com/mission/daily ，待弹出获取成功即可
 ^https:\/\/www\.v2ex\.com\/mission\/daily url script-request-header all_in_one.js
 # 饿了么Cookie获取, 打开APP,点击我的,点击左上角的签到,进入页面即可
-^https:\/\/h5\.ele\.me\/restapi\/memeber\/v1\/users url script-request-header all_in_one.js
+^https:\/\/h5\.ele\.me\/restapi\/eus\/v\d\/current_user url script-request-header all_in_one.js
 
 ```
 
