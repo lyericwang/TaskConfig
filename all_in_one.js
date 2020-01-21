@@ -874,7 +874,7 @@ let execute = () => {
             config.eleme.provider.check.url += `${eleUserId}/sign_in/info`;
             $task.fetch(config.eleme.provider.check).then(resp => {
                 let result = JSON.parse(resp.body);
-                record(`${config.eleme.provider.check.url}---${JSON.stringify(resp.body)}`);
+                // record(`${config.eleme.provider.check.url}---${JSON.stringify(resp.body)}`);
                 if (result.has_signed_in_today) {
                     config.eleme.data.notify = `[${config.eleme.name}] 今日已签到🎉`;
                     finalNotify("eleme");
