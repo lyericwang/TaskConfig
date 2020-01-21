@@ -458,6 +458,11 @@ let execute = () => {
                 check: {
                     url: `https://h5.ele.me/restapi/member/v1/users/`,
                     method: 'GET',
+                },
+                prize: {
+                    url: `https://h5.ele.me/restapi/member/v2/users/`,
+                    method: 'POST',
+                    body: ''
                 }
             },
             data: {
