@@ -163,7 +163,6 @@ let master = () => {
         getCookie();
     } else {
         execute();
-        $done({});
     }
 }
 
